@@ -5,8 +5,8 @@ export function attachRealtime(server,api,{socketPath='/live'}={}){
   const wss=new WebSocketServer({noServer:true,maxPayload:4096});
   server.on('upgrade',(req,socket,head)=>{
     const pathname=new URL(req.url,'http://localhost').pathname;
-    let origin;try{origin=new URL(req.headers.origin);}catch{socket.destroy();return;}
     if(pathname!==socketPath)return;
+    let origin;try{origin=new URL(req.headers.origin);}catch{socket.destroy();return;}
     if(origin.host!==req.headers.host){socket.destroy();return;}
     wss.handleUpgrade(req,socket,head,ws=>wss.emit('connection',ws,req));
   });
