@@ -1,0 +1,11 @@
+{
+  "firebase": {
+    "apiKey": "AIzaSyAaSc6g2DJflI4QQs5rATYFhAKbHfylEEc",
+    "authDomain": "la-ronda-spanish-trivia.firebaseapp.com",
+    "projectId": "la-ronda-spanish-trivia",
+    "storageBucket": "la-ronda-spanish-trivia.firebasestorage.app",
+    "messagingSenderId": "23755188526",
+    "appId": "1:23755188526:web:5686fa1e0a11d5cd1c72bf"
+  },
+  "firebaseGuestAuthEnabled": true
+}

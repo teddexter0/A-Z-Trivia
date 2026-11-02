@@ -1,0 +1,1254 @@
+[
+  {
+    "id": "person-messi",
+    "entity": "messi",
+    "category": "faces",
+    "tag": "Fútbol",
+    "prompt": "¿Quién es esta persona?",
+    "image": {
+      "wiki": "Lionel Messi"
+    },
+    "hints": [
+      "Campeón del mundo en 2022.",
+      "Su selección viste de celeste y blanco."
+    ],
+    "parts": [
+      {
+        "label": "Nombre / Name",
+        "answers": [
+          "Lionel Messi",
+          "Messi",
+          "Leo Messi"
+        ],
+        "placeholder": "¿Quién es?"
+      },
+      {
+        "label": "País o territorio / Country or territory",
+        "answers": [
+          "Argentina"
+        ],
+        "placeholder": "España, Colombia…"
+      }
+    ],
+    "explanation": "Won the 2022 World Cup with Argentina.",
+    "source": "https://en.wikipedia.org/wiki/Lionel_Messi"
+  },
+  {
+    "id": "person-iniesta",
+    "entity": "iniesta",
+    "category": "faces",
+    "tag": "Fútbol",
+    "prompt": "¿Quién es esta persona?",
+    "image": {
+      "wiki": "Andrés Iniesta"
+    },
+    "hints": [
+      "Marcó el gol decisivo del Mundial de 2010.",
+      "Fue centrocampista del Barcelona."
+    ],
+    "parts": [
+      {
+        "label": "Nombre / Name",
+        "answers": [
+          "Andrés Iniesta",
+          "Iniesta",
+          "Andres Iniesta"
+        ],
+        "placeholder": "¿Quién es?"
+      },
+      {
+        "label": "País o territorio / Country or territory",
+        "answers": [
+          "España",
+          "Spain",
+          "Espana"
+        ],
+        "placeholder": "España, Colombia…"
+      }
+    ],
+    "explanation": "Scored Spain’s winning goal in the 2010 World Cup final.",
+    "source": "https://en.wikipedia.org/wiki/Andr%C3%A9s_Iniesta"
+  },
+  {
+    "id": "person-nadal",
+    "entity": "nadal",
+    "category": "faces",
+    "tag": "Deporte",
+    "prompt": "¿Quién es esta persona?",
+    "image": {
+      "wiki": "Rafael Nadal"
+    },
+    "hints": [
+      "Es famoso por Roland Garros.",
+      "Nació en Mallorca."
+    ],
+    "parts": [
+      {
+        "label": "Nombre / Name",
+        "answers": [
+          "Rafael Nadal",
+          "Nadal",
+          "Rafa Nadal"
+        ],
+        "placeholder": "¿Quién es?"
+      },
+      {
+        "label": "País o territorio / Country or territory",
+        "answers": [
+          "España",
+          "Spain",
+          "Espana"
+        ],
+        "placeholder": "España, Colombia…"
+      }
+    ],
+    "explanation": "The Spanish tennis player is closely associated with Roland-Garros.",
+    "source": "https://en.wikipedia.org/wiki/Rafael_Nadal"
+  },
+  {
+    "id": "person-guardiola",
+    "entity": "guardiola",
+    "category": "faces",
+    "tag": "Fútbol",
+    "prompt": "¿Quién es esta persona?",
+    "image": {
+      "wiki": "Pep Guardiola"
+    },
+    "hints": [
+      "Entrenó al Barcelona y al Bayern.",
+      "Su nombre de pila es Josep."
+    ],
+    "parts": [
+      {
+        "label": "Nombre / Name",
+        "answers": [
+          "Pep Guardiola",
+          "Guardiola",
+          "Josep Guardiola"
+        ],
+        "placeholder": "¿Quién es?"
+      },
+      {
+        "label": "País o territorio / Country or territory",
+        "answers": [
+          "España",
+          "Spain",
+          "Espana"
+        ],
+        "placeholder": "España, Colombia…"
+      }
+    ],
+    "explanation": "Guardiola has coached Barcelona, Bayern Munich and Manchester City.",
+    "source": "https://en.wikipedia.org/wiki/Pep_Guardiola"
+  },
+  {
+    "id": "person-delbosque",
+    "entity": "delbosque",
+    "category": "faces",
+    "tag": "Fútbol",
+    "prompt": "¿Quién es esta persona?",
+    "image": {
+      "wiki": "Vicente del Bosque"
+    },
+    "hints": [
+      "Entrenó a la selección campeona de 2010.",
+      "Tiene un bigote muy reconocible."
+    ],
+    "parts": [
+      {
+        "label": "Nombre / Name",
+        "answers": [
+          "Vicente del Bosque",
+          "Del Bosque",
+          "Vicente Del Bosque"
+        ],
+        "placeholder": "¿Quién es?"
+      },
+      {
+        "label": "País o territorio / Country or territory",
+        "answers": [
+          "España",
+          "Spain",
+          "Espana"
+        ],
+        "placeholder": "España, Colombia…"
+      }
+    ],
+    "explanation": "Coached Spain to the 2010 World Cup title.",
+    "source": "https://en.wikipedia.org/wiki/Vicente_del_Bosque"
+  },
+  {
+    "id": "person-casillas",
+    "entity": "casillas",
+    "category": "faces",
+    "tag": "Fútbol",
+    "prompt": "¿Quién es esta persona?",
+    "image": {
+      "wiki": "Iker Casillas"
+    },
+    "hints": [
+      "Es portero.",
+      "Fue capitán de España en 2010."
+    ],
+    "parts": [
+      {
+        "label": "Nombre / Name",
+        "answers": [
+          "Iker Casillas",
+          "Casillas"
+        ],
+        "placeholder": "¿Quién es?"
+      },
+      {
+        "label": "País o territorio / Country or territory",
+        "answers": [
+          "España",
+          "Spain",
+          "Espana"
+        ],
+        "placeholder": "España, Colombia…"
+      }
+    ],
+    "explanation": "Spain’s captain and goalkeeper during its 2010 World Cup win.",
+    "source": "https://en.wikipedia.org/wiki/Iker_Casillas"
+  },
+  {
+    "id": "person-maradona",
+    "entity": "maradona",
+    "category": "faces",
+    "tag": "Fútbol",
+    "prompt": "¿Quién es esta persona?",
+    "image": {
+      "wiki": "Diego Maradona"
+    },
+    "hints": [
+      "El Mundial de 1986.",
+      "La mano de Dios."
+    ],
+    "parts": [
+      {
+        "label": "Nombre / Name",
+        "answers": [
+          "Diego Maradona",
+          "Maradona",
+          "Diego Armando Maradona"
+        ],
+        "placeholder": "¿Quién es?"
+      },
+      {
+        "label": "País o territorio / Country or territory",
+        "answers": [
+          "Argentina"
+        ],
+        "placeholder": "España, Colombia…"
+      }
+    ],
+    "explanation": "Maradona captained Argentina to the 1986 World Cup title.",
+    "source": "https://en.wikipedia.org/wiki/Diego_Maradona"
+  },
+  {
+    "id": "person-suarez",
+    "entity": "suarez",
+    "category": "faces",
+    "tag": "Fútbol",
+    "prompt": "¿Quién es esta persona?",
+    "image": {
+      "wiki": "Luis Suárez"
+    },
+    "hints": [
+      "Delantero uruguayo.",
+      "Jugó en Liverpool y Barcelona."
+    ],
+    "parts": [
+      {
+        "label": "Nombre / Name",
+        "answers": [
+          "Luis Suárez",
+          "Suarez",
+          "Luis Suarez"
+        ],
+        "placeholder": "¿Quién es?"
+      },
+      {
+        "label": "País o territorio / Country or territory",
+        "answers": [
+          "Uruguay"
+        ],
+        "placeholder": "España, Colombia…"
+      }
+    ],
+    "explanation": "The Uruguayan forward played for Liverpool and Barcelona.",
+    "source": "https://en.wikipedia.org/wiki/Luis_Su%C3%A1rez"
+  },
+  {
+    "id": "person-shakira",
+    "entity": "shakira",
+    "category": "faces",
+    "tag": "Música",
+    "prompt": "¿Quién es esta persona?",
+    "image": {
+      "wiki": "Shakira"
+    },
+    "hints": [
+      "Nació en Barranquilla.",
+      "Cantó Waka Waka."
+    ],
+    "parts": [
+      {
+        "label": "Nombre / Name",
+        "answers": [
+          "Shakira",
+          "Shakira Isabel Mebarak Ripoll"
+        ],
+        "placeholder": "¿Quién es?"
+      },
+      {
+        "label": "País o territorio / Country or territory",
+        "answers": [
+          "Colombia"
+        ],
+        "placeholder": "España, Colombia…"
+      }
+    ],
+    "explanation": "Shakira was born in Barranquilla, Colombia.",
+    "source": "https://en.wikipedia.org/wiki/Shakira"
+  },
+  {
+    "id": "person-badbunny",
+    "entity": "badbunny",
+    "category": "faces",
+    "tag": "Música",
+    "prompt": "¿Quién es esta persona?",
+    "image": {
+      "wiki": "Bad Bunny"
+    },
+    "hints": [
+      "Su nombre es Benito.",
+      "Un verano sin ti."
+    ],
+    "parts": [
+      {
+        "label": "Nombre / Name",
+        "answers": [
+          "Bad Bunny",
+          "Benito",
+          "Benito Antonio Martinez Ocasio"
+        ],
+        "placeholder": "¿Quién es?"
+      },
+      {
+        "label": "País o territorio / Country or territory",
+        "answers": [
+          "Puerto Rico",
+          "PR"
+        ],
+        "placeholder": "España, Colombia…"
+      }
+    ],
+    "explanation": "Bad Bunny is a Puerto Rican artist; Puerto Rico is a US territory.",
+    "source": "https://en.wikipedia.org/wiki/Bad_Bunny"
+  },
+  {
+    "id": "person-rosalia",
+    "entity": "rosalia",
+    "category": "faces",
+    "tag": "Música",
+    "prompt": "¿Quién es esta persona?",
+    "image": {
+      "wiki": "Rosalía"
+    },
+    "hints": [
+      "Motomami.",
+      "Su música mezcla estilos como el flamenco."
+    ],
+    "parts": [
+      {
+        "label": "Nombre / Name",
+        "answers": [
+          "Rosalía",
+          "Rosalia"
+        ],
+        "placeholder": "¿Quién es?"
+      },
+      {
+        "label": "País o territorio / Country or territory",
+        "answers": [
+          "España",
+          "Spain",
+          "Espana"
+        ],
+        "placeholder": "España, Colombia…"
+      }
+    ],
+    "explanation": "Rosalía is a Spanish singer associated with Motomami and El mal querer.",
+    "source": "https://en.wikipedia.org/wiki/Rosal%C3%ADa"
+  },
+  {
+    "id": "person-juanes",
+    "entity": "juanes",
+    "category": "faces",
+    "tag": "Música",
+    "prompt": "¿Quién es esta persona?",
+    "image": {
+      "wiki": "Juanes"
+    },
+    "hints": [
+      "La camisa negra.",
+      "Su nombre artístico combina Juan y Esteban."
+    ],
+    "parts": [
+      {
+        "label": "Nombre / Name",
+        "answers": [
+          "Juanes",
+          "Juan Esteban Aristizabal"
+        ],
+        "placeholder": "¿Quién es?"
+      },
+      {
+        "label": "País o territorio / Country or territory",
+        "answers": [
+          "Colombia"
+        ],
+        "placeholder": "España, Colombia…"
+      }
+    ],
+    "explanation": "The Colombian artist is known internationally for La camisa negra.",
+    "source": "https://en.wikipedia.org/wiki/Juanes"
+  },
+  {
+    "id": "person-penelope",
+    "entity": "penelope",
+    "category": "faces",
+    "tag": "Cine",
+    "prompt": "¿Quién es esta persona?",
+    "image": {
+      "wiki": "Penélope Cruz"
+    },
+    "hints": [
+      "Es actriz.",
+      "Ganó un Óscar por Vicky Cristina Barcelona."
+    ],
+    "parts": [
+      {
+        "label": "Nombre / Name",
+        "answers": [
+          "Penélope Cruz",
+          "Penelope Cruz"
+        ],
+        "placeholder": "¿Quién es?"
+      },
+      {
+        "label": "País o territorio / Country or territory",
+        "answers": [
+          "España",
+          "Spain",
+          "Espana"
+        ],
+        "placeholder": "España, Colombia…"
+      }
+    ],
+    "explanation": "Won an Academy Award for her supporting role in Vicky Cristina Barcelona.",
+    "source": "https://en.wikipedia.org/wiki/Pen%C3%A9lope_Cruz"
+  },
+  {
+    "id": "person-salma",
+    "entity": "salma",
+    "category": "faces",
+    "tag": "Cine",
+    "prompt": "¿Quién es esta persona?",
+    "image": {
+      "wiki": "Salma Hayek"
+    },
+    "hints": [
+      "Interpretó a Frida Kahlo.",
+      "Nació en México."
+    ],
+    "parts": [
+      {
+        "label": "Nombre / Name",
+        "answers": [
+          "Salma Hayek",
+          "Salma Hayek Pinault"
+        ],
+        "placeholder": "¿Quién es?"
+      },
+      {
+        "label": "País o territorio / Country or territory",
+        "answers": [
+          "México",
+          "Mexico"
+        ],
+        "placeholder": "España, Colombia…"
+      }
+    ],
+    "explanation": "The Mexican-born actress portrayed Frida Kahlo in Frida.",
+    "source": "https://en.wikipedia.org/wiki/Salma_Hayek"
+  },
+  {
+    "id": "person-frida",
+    "entity": "frida",
+    "category": "faces",
+    "tag": "Arte",
+    "prompt": "¿Quién es esta persona?",
+    "image": {
+      "wiki": "Frida Kahlo"
+    },
+    "hints": [
+      "Autorretratos.",
+      "La Casa Azul."
+    ],
+    "parts": [
+      {
+        "label": "Nombre / Name",
+        "answers": [
+          "Frida Kahlo",
+          "Frida",
+          "Magdalena Carmen Frida Kahlo"
+        ],
+        "placeholder": "¿Quién es?"
+      },
+      {
+        "label": "País o territorio / Country or territory",
+        "answers": [
+          "México",
+          "Mexico"
+        ],
+        "placeholder": "España, Colombia…"
+      }
+    ],
+    "explanation": "Frida Kahlo was a Mexican painter known for her self-portraits.",
+    "source": "https://en.wikipedia.org/wiki/Frida_Kahlo"
+  },
+  {
+    "id": "place-alhambra",
+    "entity": "alhambra",
+    "category": "places",
+    "prompt": "¿Dónde está este lugar?",
+    "image": {
+      "wiki": "Alhambra"
+    },
+    "hints": [
+      "Un conjunto de palacios y fortalezas.",
+      "Está en Andalucía."
+    ],
+    "parts": [
+      {
+        "label": "Lugar / Landmark",
+        "answers": [
+          "Alhambra",
+          "La Alhambra"
+        ],
+        "placeholder": "Nombre del lugar"
+      },
+      {
+        "label": "País / Country",
+        "answers": [
+          "España",
+          "Spain",
+          "Espana"
+        ],
+        "placeholder": "¿En qué país?"
+      }
+    ],
+    "explanation": "Alhambra — Granada, España.",
+    "source": "https://en.wikipedia.org/wiki/Alhambra"
+  },
+  {
+    "id": "place-sagrada",
+    "entity": "sagrada",
+    "category": "places",
+    "prompt": "¿Dónde está este lugar?",
+    "image": {
+      "wiki": "Sagrada Família"
+    },
+    "hints": [
+      "Una basílica asociada a Gaudí.",
+      "Está en Cataluña."
+    ],
+    "parts": [
+      {
+        "label": "Lugar / Landmark",
+        "answers": [
+          "Sagrada Família",
+          "Sagrada Familia",
+          "Basilica de la Sagrada Familia"
+        ],
+        "placeholder": "Nombre del lugar"
+      },
+      {
+        "label": "País / Country",
+        "answers": [
+          "España",
+          "Spain",
+          "Espana"
+        ],
+        "placeholder": "¿En qué país?"
+      }
+    ],
+    "explanation": "Sagrada Família — Barcelona, España.",
+    "source": "https://en.wikipedia.org/wiki/Sagrada_Fam%C3%ADlia"
+  },
+  {
+    "id": "place-machu",
+    "entity": "machu",
+    "category": "places",
+    "prompt": "¿Dónde está este lugar?",
+    "image": {
+      "wiki": "Machu Picchu"
+    },
+    "hints": [
+      "Una ciudadela inca.",
+      "Se encuentra en los Andes."
+    ],
+    "parts": [
+      {
+        "label": "Lugar / Landmark",
+        "answers": [
+          "Machu Picchu",
+          "Machupicchu"
+        ],
+        "placeholder": "Nombre del lugar"
+      },
+      {
+        "label": "País / Country",
+        "answers": [
+          "Perú",
+          "Peru"
+        ],
+        "placeholder": "¿En qué país?"
+      }
+    ],
+    "explanation": "Machu Picchu — Perú.",
+    "source": "https://en.wikipedia.org/wiki/Machu_Picchu"
+  },
+  {
+    "id": "place-chichen",
+    "entity": "chichen",
+    "category": "places",
+    "prompt": "¿Dónde está este lugar?",
+    "image": {
+      "wiki": "Chichen Itza"
+    },
+    "hints": [
+      "Un sitio arqueológico maya.",
+      "La pirámide de Kukulkán."
+    ],
+    "parts": [
+      {
+        "label": "Lugar / Landmark",
+        "answers": [
+          "Chichén Itzá",
+          "Chichen Itza"
+        ],
+        "placeholder": "Nombre del lugar"
+      },
+      {
+        "label": "País / Country",
+        "answers": [
+          "México",
+          "Mexico"
+        ],
+        "placeholder": "¿En qué país?"
+      }
+    ],
+    "explanation": "Chichén Itzá — México.",
+    "source": "https://en.wikipedia.org/wiki/Chichen_Itza"
+  },
+  {
+    "id": "place-alcazar",
+    "entity": "alcazar",
+    "category": "places",
+    "prompt": "¿Dónde está este lugar?",
+    "image": {
+      "wiki": "Alcázar of Segovia"
+    },
+    "hints": [
+      "Un castillo sobre una roca.",
+      "Está en Castilla y León."
+    ],
+    "parts": [
+      {
+        "label": "Lugar / Landmark",
+        "answers": [
+          "Alcázar de Segovia",
+          "Alcazar de Segovia",
+          "Alcazar"
+        ],
+        "placeholder": "Nombre del lugar"
+      },
+      {
+        "label": "País / Country",
+        "answers": [
+          "España",
+          "Spain",
+          "Espana"
+        ],
+        "placeholder": "¿En qué país?"
+      }
+    ],
+    "explanation": "Alcázar de Segovia — Segovia, España.",
+    "source": "https://en.wikipedia.org/wiki/Alc%C3%A1zar_of_Segovia"
+  },
+  {
+    "id": "place-casarosada",
+    "entity": "casarosada",
+    "category": "places",
+    "prompt": "¿Dónde está este lugar?",
+    "image": {
+      "wiki": "Casa Rosada"
+    },
+    "hints": [
+      "Un palacio presidencial de color rosa.",
+      "Está frente a la Plaza de Mayo."
+    ],
+    "parts": [
+      {
+        "label": "Lugar / Landmark",
+        "answers": [
+          "Casa Rosada",
+          "La Casa Rosada"
+        ],
+        "placeholder": "Nombre del lugar"
+      },
+      {
+        "label": "País / Country",
+        "answers": [
+          "Argentina"
+        ],
+        "placeholder": "¿En qué país?"
+      }
+    ],
+    "explanation": "Casa Rosada — Buenos Aires, Argentina.",
+    "source": "https://en.wikipedia.org/wiki/Casa_Rosada"
+  },
+  {
+    "id": "place-bellasartes",
+    "entity": "bellasartes",
+    "category": "places",
+    "prompt": "¿Dónde está este lugar?",
+    "image": {
+      "wiki": "Palacio de Bellas Artes"
+    },
+    "hints": [
+      "Un famoso centro cultural.",
+      "Está en la capital mexicana."
+    ],
+    "parts": [
+      {
+        "label": "Lugar / Landmark",
+        "answers": [
+          "Palacio de Bellas Artes",
+          "Bellas Artes"
+        ],
+        "placeholder": "Nombre del lugar"
+      },
+      {
+        "label": "País / Country",
+        "answers": [
+          "México",
+          "Mexico"
+        ],
+        "placeholder": "¿En qué país?"
+      }
+    ],
+    "explanation": "Palacio de Bellas Artes — Ciudad de México, México.",
+    "source": "https://en.wikipedia.org/wiki/Palacio_de_Bellas_Artes"
+  },
+  {
+    "id": "place-cartagena",
+    "entity": "cartagena",
+    "category": "places",
+    "prompt": "¿Dónde está este lugar?",
+    "image": {
+      "wiki": "Cartagena, Colombia"
+    },
+    "hints": [
+      "Una ciudad caribeña con murallas.",
+      "Está en Colombia."
+    ],
+    "parts": [
+      {
+        "label": "Lugar / Landmark",
+        "answers": [
+          "Ciudad amurallada de Cartagena",
+          "Cartagena",
+          "Cartagena de Indias"
+        ],
+        "placeholder": "Nombre del lugar"
+      },
+      {
+        "label": "País / Country",
+        "answers": [
+          "Colombia"
+        ],
+        "placeholder": "¿En qué país?"
+      }
+    ],
+    "explanation": "Ciudad amurallada de Cartagena — Cartagena, Colombia.",
+    "source": "https://en.wikipedia.org/wiki/Cartagena%2C_Colombia"
+  },
+  {
+    "id": "place-easter",
+    "entity": "easter",
+    "category": "places",
+    "prompt": "¿Dónde está este lugar?",
+    "image": {
+      "wiki": "Moai"
+    },
+    "hints": [
+      "Enormes estatuas de piedra.",
+      "Una isla del océano Pacífico."
+    ],
+    "parts": [
+      {
+        "label": "Lugar / Landmark",
+        "answers": [
+          "Moáis de Rapa Nui",
+          "Moai",
+          "Moais",
+          "Isla de Pascua",
+          "Easter Island",
+          "Rapa Nui"
+        ],
+        "placeholder": "Nombre del lugar"
+      },
+      {
+        "label": "País / Country",
+        "answers": [
+          "Chile"
+        ],
+        "placeholder": "¿En qué país?"
+      }
+    ],
+    "explanation": "Moáis de Rapa Nui — Chile.",
+    "source": "https://en.wikipedia.org/wiki/Moai"
+  },
+  {
+    "id": "place-prado",
+    "entity": "prado",
+    "category": "places",
+    "prompt": "¿Dónde está este lugar?",
+    "image": {
+      "wiki": "Museo del Prado"
+    },
+    "hints": [
+      "Un museo de arte.",
+      "Las meninas de Velázquez."
+    ],
+    "parts": [
+      {
+        "label": "Lugar / Landmark",
+        "answers": [
+          "Museo del Prado",
+          "Prado",
+          "El Prado"
+        ],
+        "placeholder": "Nombre del lugar"
+      },
+      {
+        "label": "País / Country",
+        "answers": [
+          "España",
+          "Spain",
+          "Espana"
+        ],
+        "placeholder": "¿En qué país?"
+      }
+    ],
+    "explanation": "Museo del Prado — Madrid, España.",
+    "source": "https://en.wikipedia.org/wiki/Museo_del_Prado"
+  },
+  {
+    "id": "place-cibeles",
+    "entity": "cibeles",
+    "category": "places",
+    "prompt": "¿Dónde está este lugar?",
+    "image": {
+      "wiki": "Cybele Palace"
+    },
+    "hints": [
+      "Un palacio blanco junto a una fuente famosa.",
+      "En la capital española."
+    ],
+    "parts": [
+      {
+        "label": "Lugar / Landmark",
+        "answers": [
+          "Palacio de Cibeles",
+          "Cibeles",
+          "Cybele Palace"
+        ],
+        "placeholder": "Nombre del lugar"
+      },
+      {
+        "label": "País / Country",
+        "answers": [
+          "España",
+          "Spain",
+          "Espana"
+        ],
+        "placeholder": "¿En qué país?"
+      }
+    ],
+    "explanation": "Palacio de Cibeles — Madrid, España.",
+    "source": "https://en.wikipedia.org/wiki/Cybele_Palace"
+  },
+  {
+    "id": "place-moneda",
+    "entity": "moneda",
+    "category": "places",
+    "prompt": "¿Dónde está este lugar?",
+    "image": {
+      "wiki": "La Moneda Palace"
+    },
+    "hints": [
+      "Sede de la presidencia.",
+      "Está en Santiago."
+    ],
+    "parts": [
+      {
+        "label": "Lugar / Landmark",
+        "answers": [
+          "Palacio de La Moneda",
+          "La Moneda",
+          "Palacio de la Moneda"
+        ],
+        "placeholder": "Nombre del lugar"
+      },
+      {
+        "label": "País / Country",
+        "answers": [
+          "Chile"
+        ],
+        "placeholder": "¿En qué país?"
+      }
+    ],
+    "explanation": "Palacio de La Moneda — Santiago, Chile.",
+    "source": "https://en.wikipedia.org/wiki/La_Moneda_Palace"
+  },
+  {
+    "id": "phrase-pan",
+    "entity": "phrase-pan",
+    "category": "phrases",
+    "prompt": "Es pan comido.",
+    "hints": [
+      "No habla de comida aquí."
+    ],
+    "parts": [
+      {
+        "label": "Meaning / Respuesta",
+        "answers": [
+          "It’s very easy."
+        ],
+        "choices": [
+          "It’s very easy.",
+          "The bread is missing.",
+          "I am hungry.",
+          "The meal is expensive."
+        ]
+      }
+    ],
+    "explanation": "Literally ‘eaten bread’; idiomatically ‘a piece of cake’.",
+    "source": "https://dle.rae.es/"
+  },
+  {
+    "id": "phrase-pelo",
+    "entity": "phrase-pelo",
+    "category": "phrases",
+    "prompt": "Me estás tomando el pelo.",
+    "hints": [
+      "Es una broma."
+    ],
+    "parts": [
+      {
+        "label": "Meaning / Respuesta",
+        "answers": [
+          "You’re pulling my leg."
+        ],
+        "choices": [
+          "You’re pulling my leg.",
+          "You’re cutting my hair.",
+          "You’re taking my coat.",
+          "You’re boring me."
+        ]
+      }
+    ],
+    "explanation": "Tomar el pelo means to tease or fool someone.",
+    "source": "https://dle.rae.es/"
+  },
+  {
+    "id": "phrase-ganas",
+    "entity": "phrase-ganas",
+    "category": "phrases",
+    "prompt": "Tengo ganas de viajar.",
+    "hints": [
+      "Expresa un deseo."
+    ],
+    "parts": [
+      {
+        "label": "Meaning / Respuesta",
+        "answers": [
+          "I feel like travelling."
+        ],
+        "choices": [
+          "I feel like travelling.",
+          "I have already travelled.",
+          "I refuse to travel.",
+          "I have won a trip."
+        ]
+      }
+    ],
+    "explanation": "Tener ganas de expresses wanting or feeling like doing something.",
+    "source": "https://dle.rae.es/"
+  },
+  {
+    "id": "phrase-luego",
+    "entity": "phrase-luego",
+    "category": "phrases",
+    "prompt": "Hasta luego.",
+    "hints": [
+      "Una despedida."
+    ],
+    "parts": [
+      {
+        "label": "Meaning / Respuesta",
+        "answers": [
+          "See you later."
+        ],
+        "choices": [
+          "See you later.",
+          "Good morning.",
+          "You’re welcome.",
+          "Happy birthday."
+        ]
+      }
+    ],
+    "explanation": "A common way to say goodbye.",
+    "source": "https://dle.rae.es/"
+  },
+  {
+    "id": "phrase-embarazada",
+    "entity": "phrase-embarazada",
+    "category": "phrases",
+    "prompt": "Estoy embarazada.",
+    "hints": [
+      "Cuidado: falso amigo."
+    ],
+    "parts": [
+      {
+        "label": "Meaning / Respuesta",
+        "answers": [
+          "I’m pregnant."
+        ],
+        "choices": [
+          "I’m pregnant.",
+          "I’m embarrassed.",
+          "I’m exhausted.",
+          "I’m confused."
+        ]
+      }
+    ],
+    "explanation": "Embarazada means pregnant; it is a false friend of ‘embarrassed’.",
+    "source": "https://dle.rae.es/"
+  },
+  {
+    "id": "phrase-cuenta",
+    "entity": "phrase-cuenta",
+    "category": "phrases",
+    "prompt": "La cuenta, por favor.",
+    "hints": [
+      "En un restaurante."
+    ],
+    "parts": [
+      {
+        "label": "Meaning / Respuesta",
+        "answers": [
+          "The bill, please."
+        ],
+        "choices": [
+          "The bill, please.",
+          "Tell the story, please.",
+          "Count the people, please.",
+          "The room, please."
+        ]
+      }
+    ],
+    "explanation": "In a restaurant, la cuenta means the bill.",
+    "source": "https://dle.rae.es/"
+  },
+  {
+    "id": "phrase-quedar",
+    "entity": "phrase-quedar",
+    "category": "phrases",
+    "prompt": "Quedamos a las seis.",
+    "hints": [
+      "Es un plan con otra persona."
+    ],
+    "parts": [
+      {
+        "label": "Meaning / Respuesta",
+        "answers": [
+          "We’re meeting at six."
+        ],
+        "choices": [
+          "We’re meeting at six.",
+          "We leave in six days.",
+          "We have six left.",
+          "We stay for six hours."
+        ]
+      }
+    ],
+    "explanation": "Quedar can mean arranging to meet.",
+    "source": "https://dle.rae.es/"
+  },
+  {
+    "id": "phrase-casa",
+    "entity": "phrase-casa",
+    "category": "phrases",
+    "prompt": "Siéntete como en casa.",
+    "hints": [
+      "Una bienvenida."
+    ],
+    "parts": [
+      {
+        "label": "Meaning / Respuesta",
+        "answers": [
+          "Make yourself at home."
+        ],
+        "choices": [
+          "Make yourself at home.",
+          "Go home immediately.",
+          "Sit outside the house.",
+          "I feel homesick."
+        ]
+      }
+    ],
+    "explanation": "A welcoming expression.",
+    "source": "https://dle.rae.es/"
+  },
+  {
+    "id": "phrase-reply",
+    "entity": "phrase-reply",
+    "category": "phrases",
+    "prompt": "Someone says: «Muchas gracias». ¿Qué respondes?",
+    "hints": [
+      "Una respuesta cortés."
+    ],
+    "parts": [
+      {
+        "label": "Meaning / Respuesta",
+        "answers": [
+          "De nada."
+        ],
+        "choices": [
+          "De nada.",
+          "Hasta mañana.",
+          "Tengo veinte años.",
+          "Soy de Kenia."
+        ]
+      }
+    ],
+    "explanation": "De nada means ‘you’re welcome’.",
+    "source": "https://dle.rae.es/"
+  },
+  {
+    "id": "phrase-edad",
+    "entity": "phrase-edad",
+    "category": "phrases",
+    "prompt": "«Tengo veinte años». ¿Qué significa?",
+    "hints": [
+      "Habla de la edad."
+    ],
+    "parts": [
+      {
+        "label": "Meaning / Respuesta",
+        "answers": [
+          "I’m twenty years old."
+        ],
+        "choices": [
+          "I’m twenty years old.",
+          "I have twenty friends.",
+          "It is twenty o’clock.",
+          "I have waited twenty days."
+        ]
+      }
+    ],
+    "explanation": "Spanish uses tener (to have) to express age.",
+    "source": "https://dle.rae.es/"
+  },
+  {
+    "id": "campus-history",
+    "entity": "campus-history",
+    "category": "campus",
+    "prompt": "Strathmore College began in which year?",
+    "hints": [
+      "En la década de los sesenta."
+    ],
+    "parts": [
+      {
+        "label": "Año / Year",
+        "answers": [
+          "1961"
+        ],
+        "choices": [
+          "1961",
+          "1975",
+          "1989",
+          "2002"
+        ]
+      }
+    ],
+    "explanation": "Strathmore’s official history dates the college’s establishment to 1961, by a group of professionals encouraged by St Josemaría Escrivá.",
+    "source": "https://strathmore.edu/history/"
+  },
+  {
+    "id": "campus-josemaria",
+    "entity": "campus-josemaria",
+    "category": "campus",
+    "prompt": "¿Quién inspiró y alentó el inicio de Strathmore College?",
+    "hints": [
+      "Fundó el Opus Dei."
+    ],
+    "parts": [
+      {
+        "label": "Persona / Person",
+        "answers": [
+          "Josemaría Escrivá",
+          "Josemaria Escriva",
+          "Saint Josemaria Escriva",
+          "St Josemaria Escriva",
+          "Josemaria"
+        ]
+      }
+    ],
+    "explanation": "St Josemaría Escrivá inspired and encouraged the professionals who started the college. He founded Opus Dei.",
+    "source": "https://strathmore.edu/history/"
+  },
+  {
+    "id": "campus-cinema",
+    "entity": "campus-cinema",
+    "category": "campus",
+    "prompt": "Which Nairobi venue hosted the club’s September 2026 Spanish film nights?",
+    "hints": [
+      "The films included Yuli and Todos lo saben."
+    ],
+    "parts": [
+      {
+        "label": "Lugar / Venue",
+        "answers": [
+          "Unseen Nairobi",
+          "Unseen"
+        ],
+        "choices": [
+          "Unseen Nairobi",
+          "Kenya National Theatre",
+          "Alliance Française",
+          "Nairobi Cinema"
+        ]
+      }
+    ],
+    "explanation": "The public club listing advertised Embassy of Spain film nights at Unseen Nairobi, September 1–3, 2026.",
+    "source": "https://clubs.strathmore.edu/pages/events/01M0Q12PB6QPN32GD1SQDF90K8"
+  }
+]

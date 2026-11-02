@@ -46,10 +46,18 @@ const validateAnswer = (input, letter, usedPlayers) => {
 
 // ─── Boot ───────────────────────────────────────────────────────────────────
 app.prepare().then(() => {
+  let rondaMount;
   const httpServer = createServer(async (req, res) => {
     const parsedUrl = parse(req.url, true);
+    if (parsedUrl.pathname === '/la-ronda' || parsedUrl.pathname.startsWith('/la-ronda/')) {
+      const ronda = await rondaMount;
+      if (!ronda) { res.writeHead(503, { 'content-type': 'application/json' }); res.end(JSON.stringify({error:'La Ronda is awaiting its dedicated Firebase connection.'})); return; }
+      await ronda(req, res); return;
+    }
     await handle(req, res, parsedUrl);
   });
+
+  rondaMount = import('./la-ronda/shared.mjs').then(m => m.mountRonda(httpServer)).catch(() => { console.warn('La Ronda Firebase connection is not configured. A-Z Trivia remains available.'); return null; });
 
   const io = new Server(httpServer, {
     path: '/api/socketio',
@@ -58,6 +66,7 @@ app.prepare().then(() => {
     pingTimeout: 60000,
     pingInterval: 25000,
     serveClient: false,
+    destroyUpgrade: false,
     cookie: false,
   });
 
