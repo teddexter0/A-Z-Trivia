@@ -42,7 +42,7 @@ export function step(room, now) {
     else if(room.phase==='question'){room.phase='reveal';room.deadline=room.settings.auto?at+10000:null;}
     else if(room.phase==='reveal'){
       if(!room.settings.auto||room.deadline===null)break;
-      if(room.index+1>=room.questions.length){room.phase='finished';room.deadline=null;}
+      if(room.index+1>=room.questions.length){room.phase='finished';room.finishedAt??=at;room.deadline=null;}
       else {room.index++;room.phase='countdown';room.deadline=at+countdownMs(room);}
     }
     changed=true;if(room.deadline===null)break;
@@ -79,11 +79,11 @@ export function submit(room, playerId, questionId, values, now) {
 export function control(room, action, payload, now) {
   if(action==='start') {if(room.phase!=='lobby')throw new Error('Session already started.');room.index=0;room.phase='countdown';room.deadline=now+countdownMs(room);}
   else if(action==='pause') {if(['lobby','finished'].includes(room.phase))return;room.paused=!room.paused;if(room.paused){room.remaining=room.deadline===null?null:Math.max(0,room.deadline-now);}else{room.deadline=room.remaining===null?null:now+room.remaining;}}
-  else if(action==='next') {if(room.phase!=='reveal')throw new Error('Reveal this round before continuing.');if(room.index+1>=room.questions.length){room.phase='finished';room.deadline=null;}else{room.index++;room.phase='countdown';room.deadline=now+countdownMs(room);}room.paused=false;}
+  else if(action==='next') {if(room.phase!=='reveal')throw new Error('Reveal this round before continuing.');if(room.index+1>=room.questions.length){room.phase='finished';room.finishedAt??=now;room.deadline=null;}else{room.index++;room.phase='countdown';room.deadline=now+countdownMs(room);}room.paused=false;}
   else if(action==='reveal') {if(!['question','countdown'].includes(room.phase))throw new Error('No question to reveal.');room.phase='reveal';room.deadline=room.settings.auto?now+10000:null;room.paused=false;}
   else if(action==='void') {if(room.index<0)throw new Error('No active round.');const id=room.questions[room.index].id;if(!room.voided.includes(id))room.voided.push(id);room.audit.push({action,questionId:id,reason:String(payload.reason||'Media or question problem').slice(0,200),at:now});room.phase='reveal';room.deadline=room.settings.auto?now+10000:null;room.paused=false;}
   else if(action==='adjust') {if(room.phase!=='reveal')throw new Error('Corrections are available after reveal.');const q=room.questions[room.index];const key=q.id+':'+payload.playerId;const existing=room.answers[key];if(!existing)throw new Error('This player did not submit an answer.');const part=Number(payload.part);if(!Number.isInteger(part)||!existing.parts[part])throw new Error('Unknown answer part.');if(!String(payload.reason||'').trim())throw new Error('Add a reason for the correction.');existing.parts[part].correct=!!payload.correct;existing.parts[part].points=payload.correct?100/existing.parts.length:0;existing.points=existing.parts.reduce((s,p)=>s+p.points,0);room.audit.push({action,playerId:payload.playerId,part,questionId:q.id,correct:!!payload.correct,reason:String(payload.reason).slice(0,200),at:now});}
-  else if(action==='finish') {room.phase='finished';room.deadline=null;room.paused=false;}
+  else if(action==='finish') {room.phase='finished';room.finishedAt??=now;room.deadline=null;room.paused=false;}
   else throw new Error('Unknown host action.');
 }
 export function snapshot(room, playerId, host=false, now=Date.now()) {
@@ -105,5 +105,5 @@ export function snapshot(room, playerId, host=false, now=Date.now()) {
   let rank=0,last=null;leaderboard.forEach((p,i)=>{if(p.points!==last)rank=i+1;p.rank=rank;last=p.points;});
   const mine=q?room.answers[q.id+':'+playerId]:null;
   const question=q?{id:q.id,category:q.category,prompt:q.prompt,hints:q.hints,style:q.style,hasImage:!!q.image,media:q.media?{kind:q.media.kind}:null,parts:q.parts.map(p=>({label:p.label,placeholder:p.placeholder,choices:p.choices})),...(revealed?{portrait:!!q.image?.portrait,explanation:q.explanation,source:q.source,credit:q.credit,answers:q.parts.map(p=>p.answers[0]),voided:room.voided.includes(q.id)}:{})}:null;
-  return {code:room.code,phase:room.phase,index:room.index,total:room.questions.length,deadline:room.deadline,serverNow:now,paused:room.paused,remaining:room.remaining,settings:room.settings,hasSongs:room.questions.some(item=>!!item.media),question,leaderboard,playerId,isHost:host,submitted:!!mine,receipt:mine?{receivedAt:mine.receivedAt,...(revealed?{parts:mine.parts,points:pointsFor(mine),speedBonus:bonuses.get(mine)||0}:{})}:null,answerCount:q?Object.values(room.answers).filter(a=>a.questionId===q.id).length:0,cooldownRelaxed:room.cooldownRelaxed,...(host&&revealed&&q?{responses:Object.values(room.answers).filter(a=>a.questionId===q.id),audit:room.audit}:{}),...(room.phase==='finished'?{recap:room.questions.map(q=>({prompt:q.prompt,answers:q.parts.map(p=>p.answers[0]),explanation:q.explanation,source:q.source,voided:room.voided.includes(q.id)}))}:{})};
+  return {code:room.code,phase:room.phase,index:room.index,total:room.questions.length,deadline:room.deadline,serverNow:now,paused:room.paused,remaining:room.remaining,settings:room.settings,hasSongs:room.questions.some(item=>!!item.media),question,leaderboard,playerId,isHost:host,submitted:!!mine,receipt:mine?{receivedAt:mine.receivedAt,...(revealed?{parts:mine.parts,points:pointsFor(mine),speedBonus:bonuses.get(mine)||0}:{})}:null,answerCount:q?Object.values(room.answers).filter(a=>a.questionId===q.id).length:0,cooldownRelaxed:room.cooldownRelaxed,...(host&&revealed&&q?{responses:Object.values(room.answers).filter(a=>a.questionId===q.id),audit:room.audit}:{}),...(room.phase==='finished'?{finishedAt:room.finishedAt??null,createdAt:room.createdAt,recap:room.questions.map(q=>({prompt:q.prompt,answers:q.parts.map(p=>p.answers[0]),explanation:q.explanation,source:q.source,voided:room.voided.includes(q.id)}))}:{})};
 }
