@@ -50,24 +50,29 @@ export function step(room, now) {
   }
   return changed;
 }
-function matchesAnswer(answer, value, exact){
+function answerSimilarity(answer, value, exact){
   const expected=normalize(answer), entered=normalize(value);
-  if(!entered)return false;
-  if(expected===entered)return true;
-  if(exact||expected.length<6||entered.length<5||/\d/.test(expected+entered))return false;
+  if(!entered)return 0;
+  if(expected===entered)return 1;
+  if(exact||expected.length<6||entered.length<5||/\d/.test(expected+entered))return 0;
   const limit=Math.floor(Math.max(expected.length,entered.length)*0.3);
-  if(Math.abs(expected.length-entered.length)>limit)return false;
+  if(Math.abs(expected.length-entered.length)>limit)return 0;
   let row=Array.from({length:entered.length+1},(_,i)=>i);
   for(let i=0;i<expected.length;i++){
     const next=[i+1];
     for(let j=0;j<entered.length;j++)next.push(Math.min(next[j]+1,row[j+1]+1,row[j]+(expected[i]!==entered[j])));
     row=next;
   }
-  return row[entered.length]<=limit;
+  return 1-row[entered.length]/Math.max(expected.length,entered.length);
 }
 export function score(question, values) {
-  const parts=question.parts.map((p,i)=>({label:p.label,correct:p.answers.some(a=>matchesAnswer(a,values[i],!!p.choices||/country|territory|país/i.test(p.label))),value:String(values[i]??'').slice(0,100),points:0}));
-  parts.forEach(p=>p.points=p.correct?100/parts.length:0);
+  const parts=question.parts.map((part,i)=>{
+    const value=String(values[i]??'').slice(0,100);
+    const strict=!!part.choices||/country|territory|pa[ií]s/i.test(part.label);
+    const similarity=Math.max(0,...part.answers.map(answer=>answerSimilarity(answer,value,strict)));
+    const credit=similarity>=.85?1:similarity>=.7?similarity:0;
+    return {label:part.label,value,correct:credit===1,points:credit*100/question.parts.length};
+  });
   return {parts,points:parts.reduce((s,p)=>s+p.points,0)};
 }
 export function submit(room, playerId, questionId, values, now) {

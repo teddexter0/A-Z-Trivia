@@ -92,3 +92,10 @@ test('host mix uses exact category counts and rejects unavailable music',async()
   assert.equal((await call('/api/rooms',{nickname:'Mix host',mix:{music:2}})).status,400);
   assert.equal((await call('/api/rooms',{nickname:'Mix host',mix:{faces:1.5}})).status,400);
 });
+
+test('a close typed answer earns partial points and does not qualify as fully correct',()=>{
+  const result=score(song,['Test Sing','Test Arst']);
+  assert.equal(result.parts[0].points,50);
+  assert.ok(result.parts[1].points>0&&result.parts[1].points<50);
+  assert.equal(result.parts[1].correct,false);
+});

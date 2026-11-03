@@ -97,3 +97,9 @@ linear-gradient(#c9162e 25%,#ffc845 25% 75%,#c9162e 75%);opacity:.19;background-
 @media(prefers-reduced-motion:reduce){.playing .chorus-bars i{animation:none}}
 
 .chorus-cover button[hidden]{display:none}
+
+.round-busy{width:min(360px,calc(100% - 32px));margin:auto;border:1px solid #78efa77a;border-radius:22px;padding:clamp(20px,6vw,40px);text-align:center;color:#f8f2e5;background:#102d24}
+.round-busy::backdrop{background:#06150bc4;backdrop-filter:blur(4px)}
+.round-busy p{margin:1rem 0 0}
+.round-spinner{width:clamp(38px,11vw,64px);aspect-ratio:1;margin:auto;border:5px solid #78efa733;border-top-color:#ffcc48;border-radius:50%;animation:orbit-spin .85s linear infinite}
+@media(prefers-reduced-motion:reduce){.round-spinner{animation:none}}
