@@ -82,3 +82,13 @@ test('fresh image entities take priority and repeats start with the oldest sessi
   const pack=makePack(faces,history,4,()=>0.5);
   assert.deepEqual(pack.questions.slice(0,2).map(q=>q.entity),faces.slice(0,2).map(q=>q.entity));
 });
+
+test('host mix uses exact category counts and rejects unavailable music',async()=>{
+  const {call,store}=await setupApi();
+  const result=await call('/api/rooms',{nickname:'Mix host',mix:{faces:2,phrases:1,culture:1}});
+  assert.equal(result.status,201);
+  const row=await store.get(result.body.code);
+  assert.deepEqual(row.room.questions.map(q=>q.category).sort(),['culture','faces','faces','phrases']);
+  assert.equal((await call('/api/rooms',{nickname:'Mix host',mix:{music:2}})).status,400);
+  assert.equal((await call('/api/rooms',{nickname:'Mix host',mix:{faces:1.5}})).status,400);
+});

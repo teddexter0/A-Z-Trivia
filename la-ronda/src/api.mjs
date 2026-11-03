@@ -16,13 +16,24 @@ export function makeApi({store,catalog,config={},local=false,portraitLookup}) {
       if(path==='/api/rooms'&&req.method==='POST') {
         const body=await readBody(req);const name=nickname(body.nickname);if(!nicknameKey(name))return json({error:'Choose a host nickname.'},400);
         if(config.firebase?.apiKey&&!local){const r=await fetch('https://identitytoolkit.googleapis.com/v1/accounts:lookup?key='+encodeURIComponent(config.firebase.apiKey),{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({idToken:body.firebaseToken})});if(!r.ok)return json({error:'Guest identity expired. Reload and try again.'},401);}
-        const history=await store.history();let imported=[];if(body.chorus)imported=importChorus(body.chorus);const playlist=body.chorusUrl||config.chorusPlaylist;if(playlist)imported.push(...await publicChorusSelection(playlist));
-        const enabled=Array.isArray(body.categories)?body.categories:['faces','places','phrases','culture','campus','music'];
-        const pool=[...catalog,...imported].filter(q=>enabled.includes(q.category));if(!pool.length)return json({error:'Select a category with available questions.'},400);
+        const categories=['faces','places','phrases','culture','campus','music'];
+        const mix=body.mix;
+        if(mix!==undefined&&(!mix||typeof mix!=='object'||Array.isArray(mix)||Object.entries(mix).some(([key,value])=>!categories.includes(key)||!Number.isInteger(value)||value<0||value>25)))return json({error:'Enter a valid number of questions for each category.'},400);
+        const requested=mix?Object.values(mix).reduce((sum,value)=>sum+value,0):null;
+        if(mix&&(requested<1||requested>25))return json({error:'Choose between 1 and 25 questions total.'},400);
+        const history=await store.history();let imported=[];if(body.chorus)imported=importChorus(body.chorus);const playlist=body.chorusUrl||config.chorusPlaylist;if(playlist&&(!mix||mix.music>0))imported.push(...await publicChorusSelection(playlist));
+        const enabled=mix?categories.filter(id=>mix[id]>0):Array.isArray(body.categories)?body.categories:categories;
+        const pool=[...catalog,...imported].filter(q=>enabled.includes(q.category));if(mix){
+          for(const category of enabled){
+            const available=new Set(pool.filter(q=>q.category===category).map(q=>q.entity)).size;
+            if(mix[category]>available)return json({error:category==='music'&&!available?'Add a public Chorus Clip playlist or set songs to 0.':'Only '+available+' unique '+category+' questions are available. Adjust your mix.'},400);
+          }
+        }
+        if(!pool.length)return json({error:'Select a category with available questions.'},400);
         const count=Math.max(5,Math.min(25,Number(body.count)||15));
-        const pack=makePack(pool,history,count);
+        const pack=makePack(pool,history,requested??count,Math.random,true,mix);
         const songs=pool.filter(q=>q.category==='music');
-        if(songs.length&&!pack.questions.some(q=>q.category==='music')){
+        if(!mix&&songs.length&&!pack.questions.some(q=>q.category==='music')){
           const musicPack=makePack(songs,history,1);
           pack.questions.splice(Math.floor(pack.questions.length/2),1,musicPack.questions[0]);
           pack.cooldownRelaxed ||= musicPack.cooldownRelaxed;
@@ -30,7 +41,7 @@ export function makeApi({store,catalog,config={},local=false,portraitLookup}) {
         const anthems=pool.filter(q=>q.anthem);
         if(anthems.length&&!pack.questions.some(q=>q.anthem)){
           const index=pack.questions.findIndex(q=>q.category==='culture');
-          const slot=index>=0?index:pack.questions.findLastIndex(q=>q.category!=='music');
+          const slot=index>=0?index:mix?-1:pack.questions.findLastIndex(q=>q.category!=='music');
           if(slot>=0){
             const anthemPack=makePack(anthems,history,1);
             pack.questions.splice(slot,1,anthemPack.questions[0]);

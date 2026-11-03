@@ -82,3 +82,18 @@ linear-gradient(#c9162e 25%,#ffc845 25% 75%,#c9162e 75%);opacity:.19;background-
 .winner-history ol{clear:both;list-style:none;padding:0}
 .winner-history li{display:grid;gap:.3rem;padding:.7rem 0;border-top:1px solid var(--line)}
 .winner-history li span{font-size:.86rem;color:var(--muted)}
+
+.round-mix{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:.55rem}
+.round-mix label{margin:0;display:grid;gap:.25rem}.round-mix input{min-width:0;width:100%}
+.mix-summary{display:grid;gap:.3rem;margin-top:.7rem}.mix-summary label{margin:0}.mix-summary meter{width:100%}
+.chorus-visualizer{position:relative;margin:1rem auto;max-width:min(92%,680px);min-height:205px;overflow:hidden;border-radius:16px;border:1px solid var(--line);background:#102d24}
+.chorus-visualizer .chorus-embed{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.chorus-visualizer iframe{width:100%;height:100%;border:0}
+.chorus-cover{position:relative;min-height:205px;display:grid;justify-items:center;align-content:center;padding:1rem;background:linear-gradient(135deg,#153934,#132824);color:#fff}
+.chorus-bars{height:60px;display:flex;align-items:center;gap:5px}
+.chorus-bars i{width:clamp(4px,1vw,10px);height:90%;background:#75efa7;border-radius:8px;transform:scaleY(.25)}
+.playing .chorus-bars i{animation:chorus-beat .85s ease-in-out infinite alternate;animation-delay:calc(var(--beat) * -91ms)}
+@keyframes chorus-beat{to{transform:scaleY(.93)}}
+@media(prefers-reduced-motion:reduce){.playing .chorus-bars i{animation:none}}
+
+.chorus-cover button[hidden]{display:none}

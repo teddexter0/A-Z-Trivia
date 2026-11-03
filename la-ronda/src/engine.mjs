@@ -1,7 +1,7 @@
 export const normalize = (v) => String(v ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim();
 export const copy = (v) => JSON.parse(JSON.stringify(v));
 export function shuffled(items, rng = Math.random) { const a = [...items]; for(let i=a.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a; }
-export function makePack(catalog, history = [], count = 15, rng = Math.random, campus = true) {
+export function makePack(catalog, history = [], count = 15, rng = Math.random, campus = true, mix = null) {
   const allowed=catalog.filter(q=>campus||q.category!=='campus');
   const lastSeen=new Map();
   history.slice(-6).forEach((session,index)=>session.entities.forEach(entity=>lastSeen.set(entity,index)));
@@ -9,9 +9,10 @@ export function makePack(catalog, history = [], count = 15, rng = Math.random, c
   const fresh=shuffled(allowed.filter(q=>!recent.has(q.entity)),rng);
   const old=shuffled(allowed.filter(q=>recent.has(q.entity)),rng).sort((a,b)=>lastSeen.get(a.entity)-lastSeen.get(b.entity));
   const pool=[...fresh,...old], out=[], used=new Set();
+  const remaining=mix?{...mix}:null;
   let previousCategory='', previousStyle='', previousPortraitGroup='',previousImageRegion='';
   while(out.length<count){
-    const candidates=pool.filter(q=>!used.has(q.entity)); if(!candidates.length)break;
+    const candidates=pool.filter(q=>!used.has(q.entity)&&(!remaining||remaining[q.category]>0)); if(!candidates.length)break;
     const oldest=lastSeen.get(candidates[0].entity);
     const eligible=candidates.filter(q=>lastSeen.get(q.entity)===oldest);
     const first=eligible.find(q=>q.category!==previousCategory)||eligible[0];
@@ -25,7 +26,7 @@ export function makePack(catalog, history = [], count = 15, rng = Math.random, c
     if(q.imageRegion)previousImageRegion=q.imageRegion;
     const styles=q.image?['scratch','tiles','zoom']:['clues'];
     const style=shuffled(styles.filter(s=>s!==previousStyle),rng)[0]||styles[0];
-    out.push({...copy(q),style});used.add(q.entity);previousCategory=q.category;previousStyle=style;
+    out.push({...copy(q),style});used.add(q.entity);if(remaining)remaining[q.category]--;previousCategory=q.category;previousStyle=style;
   }
   return {questions:out,cooldownRelaxed:out.some(q=>recent.has(q.entity))};
 }
