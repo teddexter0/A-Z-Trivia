@@ -4,6 +4,7 @@ export const json=(data,status=200)=>new Response(JSON.stringify(data),{status,h
 const token=()=>crypto.randomUUID()+crypto.randomUUID();
 const digest=async(v)=>Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(v)))).map(x=>x.toString(16).padStart(2,'0')).join('');
 const auth=(req)=>req.headers.get('authorization')?.replace(/^Bearer /,'')||'';
+const nicknameKey=value=>value.normalize('NFKD').replace(/\p{M}|\p{Cf}/gu,'').toLowerCase().trim().replace(/\s+/g,' ');
 const nickname=v=>String(v||'').trim().slice(0,24).replace(/[<>\x00-\x1f]/g,'');
 const caches=new Map();
 export function makeApi({store,catalog,config={},local=false,portraitLookup}) {
@@ -13,7 +14,7 @@ export function makeApi({store,catalog,config={},local=false,portraitLookup}) {
       if(req.method!=='GET'&&req.headers.get('origin')&&req.headers.get('origin')!==url.origin)return json({error:'Origin mismatch.'},403);
       if(path==='/api/config')return json({firebase:config.firebase||null,transport:config.transport||(local?'sse':'poll'),catalogCount:catalog.length,storage:local?'local-file':'durable-server',version:'1.0.0'});
       if(path==='/api/rooms'&&req.method==='POST') {
-        const body=await readBody(req);const name=nickname(body.nickname);if(!name)return json({error:'Choose a host nickname.'},400);
+        const body=await readBody(req);const name=nickname(body.nickname);if(!nicknameKey(name))return json({error:'Choose a host nickname.'},400);
         if(config.firebase?.apiKey&&!local){const r=await fetch('https://identitytoolkit.googleapis.com/v1/accounts:lookup?key='+encodeURIComponent(config.firebase.apiKey),{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({idToken:body.firebaseToken})});if(!r.ok)return json({error:'Guest identity expired. Reload and try again.'},401);}
         const history=await store.history();let imported=[];if(body.chorus)imported=importChorus(body.chorus);const playlist=body.chorusUrl||config.chorusPlaylist;if(playlist)imported.push(...await publicChorusSelection(playlist));
         const enabled=Array.isArray(body.categories)?body.categories:['faces','places','phrases','culture','campus','music'];
@@ -51,10 +52,10 @@ export function makeApi({store,catalog,config={},local=false,portraitLookup}) {
         const row=await store.get(code);if(!row||row.room.expiresAt<Date.now())return json({error:'This room is unavailable or expired.'},404);
         const room=row.room,now=Date.now();let changed=step(room,now);const host=hash===room.hostHash;let player=room.players.find(p=>p.tokenHash===hash);
         if(operation==='join'&&req.method==='POST') {
-          const body=await readBody(req);const name=nickname(body.nickname);if(!name)return json({error:'Enter a nickname.'},400);
+          const body=await readBody(req);const name=nickname(body.nickname);if(!nicknameKey(name))return json({error:'Enter a nickname.'},400);
           if(room.phase==='finished')return json({error:'This session has ended. Ask the host for the next room code.'},409);
           if(room.players.length>=50)return json({error:'This room is full (50 players).'},409);
-          if(room.players.some(p=>p.nickname.toLowerCase()===name.toLowerCase()))return json({error:'That nickname is taken. Try another.'},409);
+          if(room.players.some(p=>nicknameKey(p.nickname)===nicknameKey(name)))return json({error:'That nickname is taken. Try another.'},409);
           const playerToken=token();player={id:crypto.randomUUID(),nickname:name,tokenHash:await digest(playerToken),joinedAt:now};room.players.push(player);changed=true;
           result={code,playerToken,state:snapshot(room,player.id,false,now)};
         }else {

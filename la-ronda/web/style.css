@@ -48,3 +48,17 @@ linear-gradient(#c9162e 25%,#ffc845 25% 75%,#c9162e 75%);opacity:.19;background-
 @keyframes orbit-spin{to{transform:rotate(360deg)}}
 @media(max-width:560px){:root{font-size:18px}.photo-wrap.portrait-frame{height:clamp(240px,43vh,400px)}}
 @media(prefers-reduced-motion:reduce){body::before,.salsa-steps svg,.salsa-steps g,.salsa-steps path,.buffer-orbit{animation:none}}
+
+.audio-shortcut{display:flex;align-items:center;flex-wrap:wrap;gap:.55rem;padding:1rem;border-bottom:1px solid var(--line)}
+.audio-shortcut span{font-size:.8rem;color:var(--muted)}
+.guide-marker{position:fixed;z-index:48;border:3px solid #ffcc48;border-radius:12px;box-shadow:0 0 0 4px #21180080;pointer-events:none}
+.guide-panel{position:fixed;z-index:49;width:min(340px,calc(100vw - 20px));padding:14px 18px;background:#132f26;color:#fff;border:2px solid #ffcc48;border-radius:14px;box-shadow:0 12px 40px #0009;font-size:16px}
+.guide-panel::before{content:'';position:absolute;left:var(--guide-arrow);border:8px solid transparent}
+.guide-panel[data-side=below]::before{bottom:100%;border-bottom-color:#ffcc48}
+.guide-panel[data-side=above]::before{top:100%;border-top-color:#ffcc48}
+.guide-panel h2{font-size:21px;font-weight:700;line-height:1.25;margin:.35rem 0}
+.guide-panel p{margin:.35rem 0 .75rem;line-height:1.4}
+.guide-top,.guide-actions{display:flex;justify-content:space-between;align-items:center;gap:.5rem}
+.guide-top button{font:inherit;color:inherit;background:transparent;border:0;padding:4px 8px;cursor:pointer}
+#guide-open{white-space:nowrap}
+@media(max-width:480px){header{gap:.4rem}header .club{display:none}#guide-open{margin-left:auto}}

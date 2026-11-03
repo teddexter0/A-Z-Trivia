@@ -11,7 +11,7 @@ const room=()=>createRoom({code:'123456',hostHash:'host',playerHash:'player',nic
 test('artist-only answers receive exactly half credit; names tolerate accents and punctuation',()=>{assert.equal(score(song,['','Test Artist']).points,50);assert.equal(score(catalog.find(q=>q.id==='person-iniesta'),['ANDRES INIESTA','Spain']).points,100);});
 test('replayed submissions cannot overwrite a first answer or award points twice',()=>{const r=room();control(r,'start',{},0);step(r,14000);const a=submit(r,r.players[0].id,song.id,['wrong','Test Artist'],15000);const b=submit(r,r.players[0].id,song.id,['Test Song','Test Artist'],15500);assert.deepEqual(a,b);assert.equal(Object.keys(r.answers).length,1);assert.equal(a.points,50);});
 test('server rejects paused, late and stale-question submissions',()=>{const r=room();control(r,'start',{},0);step(r,14000);assert.throws(()=>submit(r,r.players[0].id,'old',['x'],15000),/round changed/);control(r,'pause',{},16000);assert.throws(()=>submit(r,r.players[0].id,song.id,['x'],17000),/closed/);control(r,'pause',{},19000);assert.throws(()=>submit(r,r.players[0].id,song.id,['x'],50000),/closed/);});
-test('same correct answers submitted at different speeds earn identical points and tied ranks',()=>{const r=room();r.players.push({id:'second',nickname:'Other',tokenHash:'second'});control(r,'start',{},0);step(r,14000);submit(r,r.players[0].id,song.id,['Test Song','Test Artist'],15000);submit(r,'second',song.id,['Test Song','Test Artist'],43000);step(r,44000);const s=snapshot(r,'second',false,44000);assert.equal(s.leaderboard[0].points,100);assert.equal(s.leaderboard[1].points,100);assert.deepEqual(s.leaderboard.map(p=>p.rank),[1,1]);});
+test('same correct answers submitted at different speeds earn identical points and tied ranks',()=>{const r=room();r.players.push({id:'second',nickname:'Other',tokenHash:'second'});control(r,'start',{},0);step(r,14000);submit(r,r.players[0].id,song.id,['Test Song','Test Artist'],15000);submit(r,'second',song.id,['Test Song','Test Artist'],40000);step(r,44000);const s=snapshot(r,'second',false,44000);assert.equal(s.leaderboard[0].points,100);assert.equal(s.leaderboard[1].points,100);assert.deepEqual(s.leaderboard.map(p=>p.rank),[1,1]);});
 test('current answers, answer keys, tokens and other submissions are absent before reveal',()=>{const r=room();control(r,'start',{},0);step(r,14000);submit(r,r.players[0].id,song.id,['Test Song','Test Artist'],15000);const s=snapshot(r,r.players[0].id,true,15000);assert.equal(s.question.answers,undefined);assert.equal(s.question.explanation,undefined);assert.equal(s.question.media.videoId,undefined);assert.equal(s.responses,undefined);assert.equal(s.receipt.points,undefined);assert.equal(s.receipt.parts,undefined);assert.equal(s.hostHash,undefined);assert.equal(s.leaderboard[0].tokenHash,undefined);assert.equal(s.leaderboard[0].points,0);});
 test('voiding a round removes all its points, including after an accepted correction',()=>{const r=room();control(r,'start',{},0);step(r,14000);submit(r,r.players[0].id,song.id,['wrong','Test Artist'],15000);control(r,'reveal',{},16000);control(r,'adjust',{playerId:r.players[0].id,part:0,correct:true,reason:'Recognised alias'},16100);assert.equal(snapshot(r,r.players[0].id,true,16100).leaderboard[0].points,100);control(r,'void',{reason:'Audio failed'},16200);assert.equal(snapshot(r,r.players[0].id,true,16200).leaderboard[0].points,0);assert.equal(r.audit.length,2);});
 test('corrections require a reason and are unavailable before reveal',()=>{const r=room();control(r,'start',{},0);step(r,14000);submit(r,r.players[0].id,song.id,['x','x'],15000);assert.throws(()=>control(r,'adjust',{},15100),/after reveal/);control(r,'reveal',{},16000);assert.throws(()=>control(r,'adjust',{playerId:r.players[0].id,part:0,correct:true},16100),/reason/);});
@@ -24,7 +24,7 @@ test('catalog includes no school logo; image lookup is restricted to reviewed Wi
 async function setupApi(Store=MemoryStore){const store=new Store(),api=makeApi({store,catalog,local:true});const call=async(path,body,token)=>{const r=await api(new Request('https://club.test'+path,{method:body?'POST':'GET',headers:{...(body?{'content-type':'application/json'}:{}),...(token?{authorization:'Bearer '+token}:{})},...(body?{body:JSON.stringify(body)}:{})}));return {status:r.status,body:await r.json()};};const created=await call('/api/rooms',{nickname:'Host',count:5,categories:['phrases']});return {store,call,created:created.body};}
 test('full API flow: nickname join, private host controls, server grading and export',async()=>{const {store,call,created:c}=await setupApi();const base='/api/rooms/'+c.code;const guest=await call(base+'/join',{nickname:'Alex'});assert.equal(guest.status,200);const player=guest.body.playerToken;assert.equal((await call(base+'/control',{action:'start'},player)).status,403);assert.equal((await call(base+'/state',null,'fake')).status,401);await call(base+'/control',{action:'start'},c.hostToken);let row=await store.get(c.code);row.room.phase='question';row.room.deadline=Date.now()+30000;await store.cas(c.code,row.room,row.revision);const q=row.room.questions[0];const answer=await call(base+'/answer',{questionId:q.id,values:q.parts.map(p=>p.answers[0])},player);assert.equal(answer.body.submitted,true);assert.equal(answer.body.receipt.points,undefined);await call(base+'/control',{action:'reveal'},c.hostToken);const revealed=await call(base+'/state',null,player);assert.equal(revealed.body.receipt.points,100);assert.equal(revealed.body.responses,undefined);await call(base+'/control',{action:'finish'},c.hostToken);assert.equal((await call(base+'/export',null,c.hostToken)).status,200);assert.equal((await call(base+'/export',null,player)).status,403);});
 test('concurrent compare-and-swap retries preserve joins without consuming the request twice',async()=>{class ConflictStore extends MemoryStore{failOnce=true;async cas(...args){if(this.failOnce){this.failOnce=false;return false;}return super.cas(...args);}}const {call,created:c}=await setupApi(ConflictStore);const result=await call('/api/rooms/'+c.code+'/join',{nickname:'Retry guest'});assert.equal(result.status,200);assert.equal(result.body.state.leaderboard.length,2);});
-test('duplicate nicknames and cross-origin mutations are rejected',async()=>{const {call,created:c}=await setupApi();assert.equal((await call('/api/rooms/'+c.code+'/join',{nickname:'host'})).status,409);const api=makeApi({store:new MemoryStore(),catalog});const r=await api(new Request('https://club.test/api/rooms',{method:'POST',headers:{origin:'https://elsewhere.test'},body:'{}'}));assert.equal(r.status,403);});
+test('duplicate nicknames and cross-origin mutations are rejected',async()=>{const {call,created:c}=await setupApi();assert.equal((await call('/api/rooms/'+c.code+'/join',{nickname:'host'})).status,409);assert.equal((await call('/api/rooms/'+c.code+'/join',{nickname:'  H\u00f3st\u200b  '})).status,409);const api=makeApi({store:new MemoryStore(),catalog});const r=await api(new Request('https://club.test/api/rooms',{method:'POST',headers:{origin:'https://elsewhere.test'},body:'{}'}));assert.equal(r.status,403);});
 
 test('late arrivals join active rooms and can submit; finished rooms reject new players',async()=>{
   const {call,created,store}=await setupApi();
@@ -58,12 +58,12 @@ test('speed bonus uses correct-answer receipt order and leaves partial credit in
   assert.equal(snapshot(game,host).receipt.speedBonus,10);
 });
 
-test('media rounds get ten extra buffer seconds without shortening answers',()=>{
+test('media rounds get seven extra buffer seconds without shortening answers',()=>{
   const game=room();
   control(game,'start',{},0);
-  assert.equal(game.deadline,14000);
-  step(game,14000);
-  assert.equal(game.deadline,44000);
+  assert.equal(game.deadline,11000);
+  step(game,11000);
+  assert.equal(game.deadline,41000);
   const textOnly=room();
   textOnly.questions=[{...song,media:null}];
   control(textOnly,'start',{},0);
@@ -74,4 +74,11 @@ test('typed names accept typos while choices, countries and years remain exact',
   assert.equal(score(song,['xxx','Test Artst']).points,50);
   const strict={parts:[{label:'Country',answers:['Colombia']},{label:'Year',answers:['2025']},{label:'Pick',answers:['Granada'],choices:['Grenada','Granada']}]};
   assert.equal(score(strict,['Columbia','2026','Grenada']).points,0);
+});
+
+test('fresh image entities take priority and repeats start with the oldest session',()=>{
+  const faces=catalog.filter(q=>q.category==='faces').slice(0,4);
+  const history=[{entities:[faces[1].entity]},{entities:[faces[2].entity,faces[3].entity]}];
+  const pack=makePack(faces,history,4,()=>0.5);
+  assert.deepEqual(pack.questions.slice(0,2).map(q=>q.entity),faces.slice(0,2).map(q=>q.entity));
 });

@@ -16,7 +16,7 @@ async function connect(){stopConnection();signature='';view='room';try{accept(aw
 async function poll(){const connection=roomConnection;try{const next=await request('/api/rooms/'+session.code+'/state');if(connection!==roomConnection)return;accept(next);$('.connection')?.classList.remove('bad');if($('.connection'))$('.connection').textContent='● Connected · server clock';}catch(e){if($('.connection')){$('.connection').classList.add('bad');$('.connection').textContent='Reconnecting… answers need server receipt';}}if(connection===roomConnection&&view==='room'&&state?.phase!=='finished')pollTimer=setTimeout(poll,850);}
 async function stream(){streamAbort=new AbortController();try{const r=await fetch('/api/rooms/'+session.code+'/events',{headers:{authorization:'Bearer '+(session.hostToken||session.playerToken)},signal:streamAbort.signal});if(!r.ok)throw new Error('Realtime unavailable');const reader=r.body.getReader(),decoder=new TextDecoder();let buffer='';while(view==='room'){const {value,done}=await reader.read();if(done)break;buffer+=decoder.decode(value,{stream:true});let at;while((at=buffer.indexOf('\n'))>=0){const line=buffer.slice(0,at);buffer=buffer.slice(at+1);if(line)accept(JSON.parse(line));}}}catch(e){if(e.name==='AbortError')return;}if(view==='room')poll();}
 function board(s){return `<aside class="board"><h3>${s.phase==='lobby'?'The room':'Leaderboard'}</h3><p class="muted" style="font-size:14px">${s.leaderboard.length} player${s.leaderboard.length===1?'':'s'} · ties share a place</p><div class="scores">${s.leaderboard.map(p=>`<div class="score-row"><span class="rank">${s.phase==='lobby'?'·':p.rank===1&&p.points>0?'👑':p.rank}</span><div class="avatar">${esc(p.nickname.slice(0,1).toUpperCase())}</div><span class="score-name">${esc(p.nickname)}${p.id===s.playerId?' <small>(you)</small>':''}</span><span class="score-num">${p.points}</span></div>`).join('')}</div></aside>`;}
-function renderRoom(){view='room';const s=state,q=s.question;const reveal=s.phase==='reveal';const link=location.origin+BASE+'/?room='+s.code;app.innerHTML=`<div class="room-top"><div><div class="eyebrow" style="margin-bottom:9px">${s.isHost?'YOU’RE HOSTING & PLAYING':'YOU’RE IN. ¡VAMOS!'}</div><span class="connection">● Connected · server clock</span></div><div><div class="meta">ROOM CODE</div><div class="room-code">${esc(s.code)}</div></div></div>${s.paused?'<div class="paused-banner">Round paused. Take a breath.</div>':''}<div class="room-grid"><div><section class="stage">${s.phase==='lobby'?`<div class="lobby"><div class="tag">THE MORE, THE MERRIER.</div><h2 class="spaced">Share your room</h2><div class="big-code">${s.code}</div><p class="muted">Open this link, enter a nickname, and you’re in. One connection per player; reconnect on the same device.</p><div class="lobby-link">${esc(link)}</div><button class="btn secondary spaced" data-action="copy">Copy invite link ↗</button>${s.isHost?'<p><button class="btn orange" data-action="start">Everybody here? Start the round ↗</button></p>':'<p class="pill">Waiting for the host to start…</p>'}${s.cooldownRelaxed?'<p class="muted" style="font-size:14px">Some older questions were reused because the fresh pool was too small.</p>':''}</div>`:s.phase==='finished'?finished(s):`<div class="stage-head"><span class="tag">${labels[q.category]||'LA RONDA'} · ${s.index+1} / ${s.total}</span><span class="timer" aria-label="Time remaining">—</span></div><div class="stage-body"><h2>${s.phase==='countdown'?'Prepárate…':esc(q.prompt)}</h2>${s.phase==='countdown'?`<div class="buffer-orbit" aria-hidden="true"><i></i></div><div class="countdown" aria-live="polite">3</div><p class="muted" style="text-align:center">${q.hasImage||q.media?'Getting the media ready…':'Next question coming up.'}</p>`:`${questionMedia(q,reveal)}<div class="hint"></div>${reveal?revealPanel(s):answerForm(s)}`}</div>`}</section>${s.isHost&&s.phase!=='lobby'&&s.phase!=='finished'?`<div class="host-controls"><button class="btn secondary small" data-action="pause">${s.paused?'Resume ▶':'Pause Ⅱ'}</button>${reveal?'<button class="btn orange small" data-action="next">Next round →</button>':'<button class="btn secondary small" data-action="reveal">Close & reveal</button>'}<button class="btn secondary small" data-action="void">Void this question</button><button class="btn danger small" data-action="finish">End session</button></div><p class="muted" style="font-size:13px">Void removes the round from everyone’s score. Corrections after reveal need a reason.</p>`:''}</div>${board(s)}</div>`;
+function renderRoom(){view='room';const s=state,q=s.question;const reveal=s.phase==='reveal';const link=location.origin+BASE+'/?room='+s.code;app.innerHTML=`<div class="room-top"><div><div class="eyebrow" style="margin-bottom:9px">${s.isHost?'YOU’RE HOSTING & PLAYING':'YOU’RE IN. ¡VAMOS!'}</div><span class="connection">● Connected · server clock</span></div><div><div class="meta">ROOM CODE</div><div class="room-code">${esc(s.code)}</div></div></div>${s.paused?'<div class="paused-banner">Round paused. Take a breath.</div>':''}<div class="room-grid"><div><section class="stage">${s.isHost&&s.hasSongs&&s.phase!=='finished'?'<div class="audio-shortcut"><button class="btn secondary small" data-action="audio-window">Open private audio window</button><span>Keep this window off the projector.</span></div>':''}${s.phase==='lobby'?`<div class="lobby"><div class="tag">THE MORE, THE MERRIER.</div><h2 class="spaced">Share your room</h2><div class="big-code">${s.code}</div><p class="muted">Open this link, enter a nickname, and you’re in. One connection per player; reconnect on the same device.</p><div class="lobby-link">${esc(link)}</div><button class="btn secondary spaced" data-action="copy">Copy invite link ↗</button>${s.isHost?'<p><button class="btn orange" data-action="start">Everybody here? Start the round ↗</button></p>':'<p class="pill">Waiting for the host to start…</p>'}${s.cooldownRelaxed?'<p class="muted" style="font-size:14px">Some older questions were reused because the fresh pool was too small.</p>':''}</div>`:s.phase==='finished'?finished(s):`<div class="stage-head"><span class="tag">${labels[q.category]||'LA RONDA'} · ${s.index+1} / ${s.total}</span><span class="timer" aria-label="Time remaining">—</span></div><div class="stage-body"><h2>${s.phase==='countdown'?'Prepárate…':esc(q.prompt)}</h2>${s.phase==='countdown'?`<div class="buffer-orbit" aria-hidden="true"><i></i></div><div class="countdown" aria-live="polite">3</div><p class="muted" style="text-align:center">${q.hasImage||q.media?'Getting the media ready…':'Next question coming up.'}</p>`:`${questionMedia(q,reveal)}<div class="hint"></div>${reveal?revealPanel(s):answerForm(s)}`}</div>`}</section>${s.isHost&&s.phase!=='lobby'&&s.phase!=='finished'?`<div class="host-controls"><button class="btn secondary small" data-action="pause">${s.paused?'Resume ▶':'Pause Ⅱ'}</button>${reveal?'<button class="btn orange small" data-action="next">Next round →</button>':'<button class="btn secondary small" data-action="reveal">Close & reveal</button>'}<button class="btn secondary small" data-action="void">Void this question</button><button class="btn danger small" data-action="finish">End session</button></div><p class="muted" style="font-size:13px">Void removes the round from everyone’s score. Corrections after reveal need a reason.</p>`:''}</div>${board(s)}</div>`;
  if(q?.hasImage&&['countdown','question','reveal'].includes(s.phase))loadPhoto(q.id);
  if(reveal&&q.portrait)loadPortrait(s.code,q.id);
  if(s.phase==='question'&&!s.submitted){const saved=drafts[q.id]||[];document.querySelectorAll('[data-answer-index]').forEach(input=>{input.value=saved[Number(input.dataset.answerIndex)]||'';});document.querySelectorAll('.choice').forEach(btn=>{btn.classList.toggle('selected',saved[0]===btn.dataset.value);});}
@@ -88,8 +88,20 @@ async function createHostedRoom(body){
 async function guestIdentity(){if(!config.firebase?.apiKey)return null;const saved=JSON.parse(sessionStorage.getItem('ronda-firebase')||'null');if(saved?.expires>Date.now())return saved.token;const r=await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key='+encodeURIComponent(config.firebase.apiKey),{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({returnSecureToken:true})});const data=await r.json();if(!r.ok)throw new Error('Firebase guest sign-in is unavailable. '+(data.error?.message||''));sessionStorage.setItem('ronda-firebase',JSON.stringify({token:data.idToken,expires:Date.now()+3500000}));return data.idToken;}
 app.addEventListener('input',e=>{if(e.target.dataset.answerIndex!==undefined){const values=drafts[state.question.id]||[];values[Number(e.target.dataset.answerIndex)]=e.target.value;drafts[state.question.id]=values;}});
 app.addEventListener('submit',async e=>{e.preventDefault();const form=e.target,button=form.querySelector('button[type="submit"]');if(button)button.disabled=true;try{if(form.id==='join'){const f=new FormData(form),code=String(f.get('code'));const data=await request('/api/rooms/'+code+'/join',{nickname:f.get('nickname')},null);session={code,playerToken:data.playerToken};persist();await connect();}else if(form.id==='create'){const f=new FormData(form);localStorage.setItem('ronda-chorus-link',String(f.get('chorusUrl')||''));const data=await createHostedRoom({nickname:f.get('nickname'),count:Number(f.get('count')),seconds:Number(f.get('seconds')),auto:f.has('auto'),speedBonus:f.has('speedBonus'),categories:f.getAll('category'),chorusUrl:f.get('chorusUrl')||null});session={code:data.code,hostToken:data.hostToken,playerToken:data.playerToken};persist();await connect();}else if(form.id==='answer'){const q=state.question,values=drafts[q.id]||[];if(!values.some(v=>String(v||'').trim()))throw new Error('Add at least one answer.');accept(await request('/api/rooms/'+session.code+'/answer',{questionId:q.id,values:q.parts.map((_,i)=>values[i]||'')}));}}catch(e){toast(e.message);}finally{if(button)button.disabled=false;}});
-app.addEventListener('click',async e=>{const choice=e.target.closest('.choice');if(choice){drafts[state.question.id]=[choice.dataset.value];document.querySelectorAll('.choice').forEach(b=>b.classList.toggle('selected',b===choice));return;}const btn=e.target.closest('[data-action]');if(!btn)return;const action=btn.dataset.action;try{if(action==='home'){stopConnection();home();}else if(action==='setup'){stopConnection();setup();}else if(action==='resume'){await connect();}else if(action==='copy'){await navigator.clipboard.writeText(location.origin+BASE+'/?room='+session.code);toast('Invite link copied.');}else if(action==='export'){const csvCell=value=>'"'+String(value).replace(/^[=+@\-\t\r\n]/,"'$&").replaceAll('"','""')+'"';const rows=[['Rank','Player','Points'],...state.leaderboard.map(p=>[p.rank,p.nickname,p.points])];const url=URL.createObjectURL(new Blob(['\uFEFF'+rows.map(row=>row.map(csvCell).join(',')).join('\r\n')],{type:'text/csv;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download='la-ronda-'+session.code+'-results.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),2000);}else{if(action==='finish'&&!confirm('End this session and show final scores?'))return;const payload={action};if(action==='adjust'){payload.playerId=btn.dataset.player;payload.part=Number(btn.dataset.part);payload.correct=btn.dataset.correct==='true';payload.reason=document.querySelector('[data-reason-player="'+btn.dataset.player+'"]').value;}if(action==='void')payload.reason=prompt('Why void this round?','Photo / audio unavailable');if(action==='void'&&payload.reason===null)return;btn.disabled=true;accept(await request('/api/rooms/'+session.code+'/control',payload));}}catch(e){toast(e.message);}finally{btn.disabled=false;}});
-let chorus=null,youtubeReady;
+app.addEventListener('click',async e=>{const choice=e.target.closest('.choice');if(choice){drafts[state.question.id]=[choice.dataset.value];document.querySelectorAll('.choice').forEach(b=>b.classList.toggle('selected',b===choice));return;}const btn=e.target.closest('[data-action]');if(!btn)return;const action=btn.dataset.action;try{if(action==='audio-window'){openAudioWindow();syncChorus(state);}else if(action==='home'){stopConnection();home();}else if(action==='setup'){stopConnection();setup();}else if(action==='resume'){await connect();}else if(action==='copy'){await navigator.clipboard.writeText(location.origin+BASE+'/?room='+session.code);toast('Invite link copied.');}else if(action==='export'){const csvCell=value=>'"'+String(value).replace(/^[=+@\-\t\r\n]/,"'$&").replaceAll('"','""')+'"';const rows=[['Rank','Player','Points'],...state.leaderboard.map(p=>[p.rank,p.nickname,p.points])];const url=URL.createObjectURL(new Blob(['\uFEFF'+rows.map(row=>row.map(csvCell).join(',')).join('\r\n')],{type:'text/csv;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download='la-ronda-'+session.code+'-results.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),2000);}else{if(action==='finish'&&!confirm('End this session and show final scores?'))return;if(action==='start'&&state.hasSongs&&(!audioWindow||audioWindow.closed))openAudioWindow();
+const payload={action};if(action==='adjust'){payload.playerId=btn.dataset.player;payload.part=Number(btn.dataset.part);payload.correct=btn.dataset.correct==='true';payload.reason=document.querySelector('[data-reason-player="'+btn.dataset.player+'"]').value;}if(action==='void')payload.reason=prompt('Why void this round?','Photo / audio unavailable');if(action==='void'&&payload.reason===null)return;btn.disabled=true;accept(await request('/api/rooms/'+session.code+'/control',payload));}}catch(e){toast(e.message);}finally{btn.disabled=false;}});
+let chorus=null,youtubeReady,audioWindow;
+function openAudioWindow(){
+  if(audioWindow&&!audioWindow.closed){audioWindow.focus();return;}
+  stopChorus();youtubeReady=null;
+  audioWindow=window.open('', 'la-ronda-private-audio','popup,width=550,height=440');
+  if(!audioWindow){toast('Allow popups, then open the private audio window.');return;}
+  const doc=audioWindow.document;
+  doc.title='La Ronda | Private host audio';
+  doc.body.innerHTML='<main><h1>Private host audio</h1><p>Keep this window off the projector. Song clips play here when their questions open.</p></main>';
+  doc.body.style.cssText='font:16px system-ui;background:#102d24;color:#f8f2e5;padding:18px';
+}
+window.addEventListener('pagehide',()=>{if(audioWindow&&!audioWindow.closed)audioWindow.close();});
 function stopChorus(){
   const previous=chorus;
   chorus=null;
@@ -97,20 +109,22 @@ function stopChorus(){
   previous?.deck.remove();
 }
 function loadYouTube(){
-  if(window.YT?.Player)return Promise.resolve(window.YT);
+  const playerWindow=audioWindow;
+  const doc=playerWindow.document;
+  if(playerWindow.YT?.Player)return Promise.resolve(playerWindow.YT);
   if(youtubeReady)return youtubeReady;
   youtubeReady=new Promise((resolve,reject)=>{
-    const script=document.createElement('script');
+    const script=doc.createElement('script');
     script.src='https://www.youtube.com/iframe_api';
     const timeout=setTimeout(()=>{script.remove();reject(new Error('Player timed out.'));},12000);
-    window.onYouTubeIframeAPIReady=()=>{clearTimeout(timeout);resolve(window.YT);};
+    playerWindow.onYouTubeIframeAPIReady=()=>{clearTimeout(timeout);resolve(playerWindow.YT);};
     script.onerror=()=>{clearTimeout(timeout);script.remove();reject(new Error('Player unavailable.'));};
-    document.head.append(script);
+    doc.head.append(script);
   }).catch(error=>{youtubeReady=null;throw error;});
   return youtubeReady;
 }
 function syncChorus(room){
-  if(!room.isHost||!['countdown','question'].includes(room.phase)||!room.question?.media){stopChorus();return;}
+  if(!audioWindow||audioWindow.closed||!room.isHost||!['countdown','question'].includes(room.phase)||!room.question?.media){stopChorus();return;}
   const key=room.code+':'+room.question.id;
   if(chorus?.key===key){
     const waiting=room.paused||room.phase==='countdown';
@@ -122,10 +136,10 @@ function syncChorus(room){
     return;
   }
   stopChorus();
-  const deck=document.createElement('aside');
-  deck.className='chorus-deck';
-  deck.innerHTML='<div><strong>Host audio</strong><p role="status">Loading the chorus…</p><small>Share the join link on the big screen to keep the answer hidden.</small></div><div class="chorus-embed"></div>';
-  app.before(deck);
+  const doc=audioWindow.document;
+  const deck=doc.createElement('aside');
+  deck.innerHTML='<p role="status">Loading the chorus…</p><div class="chorus-embed"></div>';
+  doc.body.append(deck);
   const current={key,deck,paused:room.paused||room.phase==='countdown',ended:false,player:null};
   chorus=current;
   const status=message=>{if(chorus===current)deck.querySelector('[role=status]').textContent=message;};
@@ -134,7 +148,7 @@ function syncChorus(room){
     if(!media){status('This chorus is unavailable. You can void this question.');return;}
     const clip={videoId:media.videoId,startSeconds:media.start,endSeconds:media.end};
     current.player=new YT.Player(deck.querySelector('.chorus-embed'),{
-      videoId:media.videoId,
+      videoId:media.videoId,width:480,height:270,
       playerVars:{playsinline:1,origin:location.origin,start:Math.floor(media.start),end:Math.ceil(media.end)},
       events:{
         onReady:({target})=>{
@@ -158,6 +172,80 @@ function syncChorus(room){
 }
 $('#sound').onclick=()=>{sound=!sound;$('#sound').textContent=sound?'♫':'♩';toast(sound?'Game sounds on.':'Game sounds off.');if(sound)beep();};
 function beep(){if(!sound)return;try{const C=window.AudioContext||window.webkitAudioContext,c=new C(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=620;g.gain.setValueAtTime(.05,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.2);o.start();o.stop(c.currentTime+.2);setTimeout(()=>c.close(),300);}catch{}}
+const guideButton=$('#guide-open');
+let guide;
+function guideSteps(){
+  if(view==='setup')return [
+    ['#create .panel','Set up the round','Pick your nickname, question count and answer time. Turn speed bonuses off for equal points.'],
+    ['#create .checks','Choose the mix','Select the categories you want in this game.'],
+    ['#chorus-link','Add songs','Paste a public Chorus Clip playlist link to include song rounds.'],
+    ['#create button[type=submit]','Create your room','Create the room, then share its code or invite link.']
+  ];
+  if(view==='room')return [
+    ['.room-code','Room code','Players can join with this code, even after the game starts.'],
+    ['[data-action=copy]','Invite players','Copy the link and share it with your group.'],
+    ['[data-action=start]','Start the game','Start when your group is ready. For song rounds, keep the private audio window off the shared screen.'],
+    ['[data-action=audio-window]','Private audio','Open this once on the host device. Choruses play in that window, away from the game screen.'],
+    ['.timer','Watch the timer','Media loads during the countdown. Answer when the question opens.'],
+    ['#answer, .receipt, .reveal','Answer and reveal','Pick an option or type an answer. After you submit, the reveal shows what counted.'],
+    ['.host-controls:has([data-action=pause])','Host controls','Pause if anyone needs more time. Reveal, advance, or void a question when needed.'],
+    ['.board','Leaderboard','Scores update after the reveal. First place gets a crown.'],
+    ['[data-action=export]','Save scores','Download the finished leaderboard as a spreadsheet-friendly CSV.']
+  ];
+  return [
+    ['#join input[name=nickname]','Pick a nickname','Use a name that nobody else in this room has taken.'],
+    ['#join input[name=code]','Enter the room code','Use the six digits from the host, then press Join.'],
+    ['[data-action=setup]','Hosting?','Open host setup to choose the mix, time limit and optional song playlist.']
+  ];
+}
+function closeGuide(){
+  if(!guide)return;
+  guide.panel.remove();guide.marker.remove();guide=null;
+  guideButton.focus({preventScroll:true});
+}
+function positionGuide(){
+  if(!guide)return;
+  const target=$(guide.steps[guide.index][0]);
+  if(!target){closeGuide();return;}
+  const rect=target.getBoundingClientRect(),{panel,marker}=guide;
+  Object.assign(marker.style,{left:rect.left-3+'px',top:rect.top-3+'px',width:rect.width+6+'px',height:rect.height+6+'px'});
+  marker.hidden=rect.bottom<0||rect.top>innerHeight;
+  const below=rect.bottom+14+panel.offsetHeight<=innerHeight;
+  const above=rect.top-14-panel.offsetHeight>=0;
+  const top=below?rect.bottom+14:above?rect.top-14-panel.offsetHeight:innerHeight-panel.offsetHeight-10;
+  const left=Math.max(10,Math.min(rect.left,innerWidth-panel.offsetWidth-10));
+  panel.style.left=left+'px';
+  panel.style.top=Math.max(10,top)+'px';
+  panel.style.setProperty('--guide-arrow',Math.max(12,Math.min(rect.left+rect.width/2-left,panel.offsetWidth-22))+'px');
+  panel.dataset.side=below?'below':above?'above':'edge';
+}
+function showGuideStep(index){
+  guide.index=index;
+  const [selector,title,message]=guide.steps[index];
+  $(selector)?.scrollIntoView({block:'center',inline:'nearest',behavior:'instant'});
+  guide.panel.innerHTML=`<div class="guide-top"><span>${index+1} / ${guide.steps.length}</span><button type="button" data-guide="close" aria-label="Close tutorial">×</button></div><h2>${esc(title)}</h2><p>${esc(message)}</p><div class="guide-actions"><button class="btn secondary small" type="button" data-guide="back" ${index===0?'disabled':''}>Back</button><button class="btn small" type="button" data-guide="next">${index+1===guide.steps.length?'Done':'Next'}</button></div>`;
+  positionGuide();
+  guide.panel.querySelector('[data-guide=next]').focus({preventScroll:true});
+}
+guideButton.addEventListener('click',()=>{
+  if(guide){closeGuide();return;}
+  const steps=guideSteps().filter(([selector])=>$(selector));
+  if(!steps.length)return;
+  const panel=document.createElement('aside'),marker=document.createElement('div');
+  panel.className='guide-panel';panel.setAttribute('role','dialog');panel.setAttribute('aria-label','How to play La Ronda');
+  marker.className='guide-marker';marker.setAttribute('aria-hidden','true');
+  document.body.append(marker,panel);guide={panel,marker,steps,index:0};
+  panel.addEventListener('click',event=>{
+    const action=event.target.closest('[data-guide]')?.dataset.guide;
+    if(action==='close'||(action==='next'&&guide.index+1===steps.length))closeGuide();
+    else if(action==='next'||action==='back')showGuideStep(guide.index+(action==='next'?1:-1));
+  });
+  showGuideStep(0);
+});
+window.addEventListener('scroll',positionGuide,{passive:true});
+window.addEventListener('resize',positionGuide);
+document.addEventListener('keydown',event=>{if(event.key==='Escape'&&guide)closeGuide();});
+new MutationObserver(positionGuide).observe(app,{childList:true});
 try{session=JSON.parse(localStorage.getItem('ronda-session')||'null');}catch{localStorage.removeItem('ronda-session');}
 try{config=await request('/api/config',undefined,null);}catch(e){toast('Server unavailable. Start the app server to create or join a room.');}
 home();

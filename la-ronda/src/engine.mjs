@@ -3,18 +3,26 @@ export const copy = (v) => JSON.parse(JSON.stringify(v));
 export function shuffled(items, rng = Math.random) { const a = [...items]; for(let i=a.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a; }
 export function makePack(catalog, history = [], count = 15, rng = Math.random, campus = true) {
   const allowed=catalog.filter(q=>campus||q.category!=='campus');
-  const recent=new Set(history.slice(-6).flatMap(h=>h.entities));
+  const lastSeen=new Map();
+  history.slice(-6).forEach((session,index)=>session.entities.forEach(entity=>lastSeen.set(entity,index)));
+  const recent=new Set(lastSeen.keys());
   const fresh=shuffled(allowed.filter(q=>!recent.has(q.entity)),rng);
-  const old=shuffled(allowed.filter(q=>recent.has(q.entity)),rng);
+  const old=shuffled(allowed.filter(q=>recent.has(q.entity)),rng).sort((a,b)=>lastSeen.get(a.entity)-lastSeen.get(b.entity));
   const pool=[...fresh,...old], out=[], used=new Set();
-  let previousCategory='', previousStyle='', previousPortraitGroup='';
+  let previousCategory='', previousStyle='', previousPortraitGroup='',previousImageRegion='';
   while(out.length<count){
     const candidates=pool.filter(q=>!used.has(q.entity)); if(!candidates.length)break;
-    const first=candidates.find(q=>q.category!==previousCategory)||candidates[0];
-    const q=first.portraitGroup&&first.portraitGroup===previousPortraitGroup
-      ?candidates.find(q=>q.category===first.category&&recent.has(q.entity)===recent.has(first.entity)&&q.portraitGroup&&q.portraitGroup!==previousPortraitGroup)||first
-      :first;
+    const oldest=lastSeen.get(candidates[0].entity);
+    const eligible=candidates.filter(q=>lastSeen.get(q.entity)===oldest);
+    const first=eligible.find(q=>q.category!==previousCategory)||eligible[0];
+    const alternatives=eligible.filter(q=>q.category===first.category);
+    const balanced=first.portraitGroup&&first.portraitGroup===previousPortraitGroup
+      ?alternatives.filter(q=>q.portraitGroup&&q.portraitGroup!==previousPortraitGroup)
+      :[];
+    const options=balanced.length?balanced:alternatives;
+    const q=options.find(q=>!q.imageRegion||q.imageRegion!==previousImageRegion)||options[0];
     if(q.portraitGroup)previousPortraitGroup=q.portraitGroup;
+    if(q.imageRegion)previousImageRegion=q.imageRegion;
     const styles=q.image?['scratch','tiles','zoom']:['clues'];
     const style=shuffled(styles.filter(s=>s!==previousStyle),rng)[0]||styles[0];
     out.push({...copy(q),style});used.add(q.entity);previousCategory=q.category;previousStyle=style;
@@ -24,7 +32,7 @@ export function makePack(catalog, history = [], count = 15, rng = Math.random, c
 export function createRoom({code,hostHash,playerHash,nickname,pack,now,settings={}}) {
   return {code,hostHash,createdAt:now,expiresAt:now+8*3600000,revision:0,phase:'lobby',index:-1,deadline:null,paused:false,remaining:0,questions:pack.questions,cooldownRelaxed:pack.cooldownRelaxed,settings:{seconds:Math.max(15,Math.min(90,Number(settings.seconds)||30)),auto:settings.auto!==false,speedBonus:settings.speedBonus===true},players:[{id:crypto.randomUUID(),tokenHash:playerHash,nickname:nickname||'Anfitrión',joinedAt:now}],answers:{},audit:[],voided:[]};
 }
-const countdownMs=room=>room.questions[room.index]?.image||room.questions[room.index]?.media?14000:4000;
+const countdownMs=room=>room.questions[room.index]?.image||room.questions[room.index]?.media?11000:4000;
 export function step(room, now) {
   if(room.paused||room.phase==='lobby'||room.phase==='finished')return false;
   let changed=false;
@@ -97,5 +105,5 @@ export function snapshot(room, playerId, host=false, now=Date.now()) {
   let rank=0,last=null;leaderboard.forEach((p,i)=>{if(p.points!==last)rank=i+1;p.rank=rank;last=p.points;});
   const mine=q?room.answers[q.id+':'+playerId]:null;
   const question=q?{id:q.id,category:q.category,prompt:q.prompt,hints:q.hints,style:q.style,hasImage:!!q.image,media:q.media?{kind:q.media.kind}:null,parts:q.parts.map(p=>({label:p.label,placeholder:p.placeholder,choices:p.choices})),...(revealed?{portrait:!!q.image?.portrait,explanation:q.explanation,source:q.source,credit:q.credit,answers:q.parts.map(p=>p.answers[0]),voided:room.voided.includes(q.id)}:{})}:null;
-  return {code:room.code,phase:room.phase,index:room.index,total:room.questions.length,deadline:room.deadline,serverNow:now,paused:room.paused,remaining:room.remaining,settings:room.settings,question,leaderboard,playerId,isHost:host,submitted:!!mine,receipt:mine?{receivedAt:mine.receivedAt,...(revealed?{parts:mine.parts,points:pointsFor(mine),speedBonus:bonuses.get(mine)||0}:{})}:null,answerCount:q?Object.values(room.answers).filter(a=>a.questionId===q.id).length:0,cooldownRelaxed:room.cooldownRelaxed,...(host&&revealed&&q?{responses:Object.values(room.answers).filter(a=>a.questionId===q.id),audit:room.audit}:{}),...(room.phase==='finished'?{recap:room.questions.map(q=>({prompt:q.prompt,answers:q.parts.map(p=>p.answers[0]),explanation:q.explanation,source:q.source,voided:room.voided.includes(q.id)}))}:{})};
+  return {code:room.code,phase:room.phase,index:room.index,total:room.questions.length,deadline:room.deadline,serverNow:now,paused:room.paused,remaining:room.remaining,settings:room.settings,hasSongs:room.questions.some(item=>!!item.media),question,leaderboard,playerId,isHost:host,submitted:!!mine,receipt:mine?{receivedAt:mine.receivedAt,...(revealed?{parts:mine.parts,points:pointsFor(mine),speedBonus:bonuses.get(mine)||0}:{})}:null,answerCount:q?Object.values(room.answers).filter(a=>a.questionId===q.id).length:0,cooldownRelaxed:room.cooldownRelaxed,...(host&&revealed&&q?{responses:Object.values(room.answers).filter(a=>a.questionId===q.id),audit:room.audit}:{}),...(room.phase==='finished'?{recap:room.questions.map(q=>({prompt:q.prompt,answers:q.parts.map(p=>p.answers[0]),explanation:q.explanation,source:q.source,voided:room.voided.includes(q.id)}))}:{})};
 }
