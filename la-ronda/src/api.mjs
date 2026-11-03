@@ -26,6 +26,16 @@ export function makeApi({store,catalog,config={},local=false,portraitLookup}) {
           pack.questions.splice(Math.floor(pack.questions.length/2),1,musicPack.questions[0]);
           pack.cooldownRelaxed ||= musicPack.cooldownRelaxed;
         }
+        const anthems=pool.filter(q=>q.anthem);
+        if(anthems.length&&!pack.questions.some(q=>q.anthem)){
+          const index=pack.questions.findIndex(q=>q.category==='culture');
+          const slot=index>=0?index:pack.questions.findLastIndex(q=>q.category!=='music');
+          if(slot>=0){
+            const anthemPack=makePack(anthems,history,1);
+            pack.questions.splice(slot,1,anthemPack.questions[0]);
+            pack.cooldownRelaxed ||= anthemPack.cooldownRelaxed;
+          }
+        }
         pack.questions.forEach(q=>q.parts.forEach(p=>{if(p.choices)p.choices=shuffled(p.choices);}));
         const hostToken=token(),playerToken=token();let room;
         for(let i=0;i<5;i++){const digits=new Uint32Array(1);crypto.getRandomValues(digits);const code=String(100000+(digits[0]%900000));room=createRoom({code,hostHash:await digest(hostToken),playerHash:await digest(playerToken),nickname:name,pack,now:Date.now(),settings:body});try{await store.insert(room);break;}catch(e){if(i===4)throw e;}}
@@ -52,7 +62,7 @@ export function makeApi({store,catalog,config={},local=false,portraitLookup}) {
           if(host&&!player)player=room.players[0];
           if(operation==='answer'&&req.method==='POST') {const body=await readBody(req);if(!Array.isArray(body.values)||body.values.length>3||body.values.some(v=>typeof v!=='string'||v.length>100))return json({error:'Invalid answer.'},400);submit(room,player.id,body.questionId,body.values,now);changed=true;}
           else if(operation==='control'&&req.method==='POST'){if(!host)return json({error:'Host controls are private.'},403);const body=await readBody(req);control(room,body.action,body,now);changed=true;}
-          else if(operation==='media') {if(!host)return json({error:'Playback is on the host device.'},403);const q=room.questions[room.index];return json(q?.media&&['question','reveal'].includes(room.phase)&&(!url.searchParams.has('question')||url.searchParams.get('question')===q.id)?q.media:null);}
+          else if(operation==='media') {if(!host)return json({error:'Playback is on the host device.'},403);const q=room.questions[room.index];return json(q?.media&&['countdown','question','reveal'].includes(room.phase)&&(!url.searchParams.has('question')||url.searchParams.get('question')===q.id)?q.media:null);}
           else if(operation==='portrait'&&req.method==='GET') {
           const question=room.questions[room.index];
           if(room.phase!=='reveal'||question?.id!==url.searchParams.get('question')||!question.image?.portrait)return json(null);
@@ -73,7 +83,7 @@ async function readBody(req){if(bodies.has(req))return bodies.get(req);if(Number
 async function imageResponse(code,req,url,store){
   const row=await store.get(code);if(!row||row.room.expiresAt<Date.now())return json({error:'Room expired.'},404);
   const hash=await digest(auth(req));if(!row.room.players.some(p=>p.tokenHash===hash)&&row.room.hostHash!==hash)return json({error:'Join this room first.'},401);
-  step(row.room,Date.now());const q=row.room.questions[row.room.index];if(url.searchParams.has('question')&&url.searchParams.get('question')!==q?.id)return json({error:'The question changed.'},409);if(!q?.image||!['question','reveal'].includes(row.room.phase))return json({error:'No active image.'},404);
+  step(row.room,Date.now());const q=row.room.questions[row.room.index];if(url.searchParams.has('question')&&url.searchParams.get('question')!==q?.id)return json({error:'The question changed.'},409);if(!q?.image||!['countdown','question','reveal'].includes(row.room.phase))return json({error:'No active image.'},404);
   const key=q.image.wiki;let cached=caches.get(key);
   if(!cached||cached.expiry<Date.now()){
     const endpoint='https://en.wikipedia.org/w/api.php?action=query&format=json&prop=pageimages&piprop=original&pilicense=free&titles='+encodeURIComponent(key);

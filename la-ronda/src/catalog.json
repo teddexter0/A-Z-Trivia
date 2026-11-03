@@ -4,7 +4,7 @@
     "entity": "messi",
     "category": "faces",
     "tag": "Fútbol",
-    "prompt": "Who is this person?",
+    "prompt": "Can you name this face from the Spanish-speaking world?",
     "image": {
       "wiki": "Lionel Messi"
     },
@@ -39,7 +39,7 @@
     "entity": "iniesta",
     "category": "faces",
     "tag": "Fútbol",
-    "prompt": "Who is this person?",
+    "prompt": "Can you name this face from the Spanish-speaking world?",
     "image": {
       "wiki": "Andrés Iniesta"
     },
@@ -76,7 +76,7 @@
     "entity": "nadal",
     "category": "faces",
     "tag": "Deporte",
-    "prompt": "Who is this person?",
+    "prompt": "Can you name this face from the Spanish-speaking world?",
     "image": {
       "wiki": "Rafael Nadal"
     },
@@ -113,7 +113,7 @@
     "entity": "guardiola",
     "category": "faces",
     "tag": "Fútbol",
-    "prompt": "Who is this person?",
+    "prompt": "Can you name this face from the Spanish-speaking world?",
     "image": {
       "wiki": "Pep Guardiola"
     },
@@ -150,7 +150,7 @@
     "entity": "delbosque",
     "category": "faces",
     "tag": "Fútbol",
-    "prompt": "Who is this person?",
+    "prompt": "Can you name this face from the Spanish-speaking world?",
     "image": {
       "wiki": "Vicente del Bosque"
     },
@@ -187,7 +187,7 @@
     "entity": "casillas",
     "category": "faces",
     "tag": "Fútbol",
-    "prompt": "Who is this person?",
+    "prompt": "Can you name this face from the Spanish-speaking world?",
     "image": {
       "wiki": "Iker Casillas"
     },
@@ -223,7 +223,7 @@
     "entity": "maradona",
     "category": "faces",
     "tag": "Fútbol",
-    "prompt": "Who is this person?",
+    "prompt": "Can you name this face from the Spanish-speaking world?",
     "image": {
       "wiki": "Diego Maradona"
     },
@@ -258,7 +258,7 @@
     "entity": "suarez",
     "category": "faces",
     "tag": "Fútbol",
-    "prompt": "Who is this person?",
+    "prompt": "Can you name this face from the Spanish-speaking world?",
     "image": {
       "wiki": "Luis Suárez"
     },
@@ -293,7 +293,7 @@
     "entity": "shakira",
     "category": "faces",
     "tag": "Música",
-    "prompt": "Who is this person?",
+    "prompt": "Can you name this face from the Spanish-speaking world?",
     "image": {
       "wiki": "Shakira"
     },
@@ -327,7 +327,7 @@
     "entity": "badbunny",
     "category": "faces",
     "tag": "Música",
-    "prompt": "Who is this person?",
+    "prompt": "Can you name this face from the Spanish-speaking world?",
     "image": {
       "wiki": "Bad Bunny"
     },
@@ -363,7 +363,7 @@
     "entity": "rosalia",
     "category": "faces",
     "tag": "Música",
-    "prompt": "Who is this person?",
+    "prompt": "Can you name this face from the Spanish-speaking world?",
     "image": {
       "wiki": "Rosalía"
     },
@@ -399,7 +399,7 @@
     "entity": "juanes",
     "category": "faces",
     "tag": "Música",
-    "prompt": "Who is this person?",
+    "prompt": "Can you name this face from the Spanish-speaking world?",
     "image": {
       "wiki": "Juanes"
     },
@@ -433,7 +433,7 @@
     "entity": "penelope",
     "category": "faces",
     "tag": "Cine",
-    "prompt": "Who is this person?",
+    "prompt": "Can you name this face from the Spanish-speaking world?",
     "image": {
       "wiki": "Penélope Cruz",
       "portrait": "tmdb"
@@ -470,7 +470,7 @@
     "entity": "salma",
     "category": "faces",
     "tag": "Cine",
-    "prompt": "Who is this person?",
+    "prompt": "Can you name this face from the Spanish-speaking world?",
     "image": {
       "wiki": "Salma Hayek",
       "portrait": "tmdb"
@@ -506,7 +506,7 @@
     "entity": "frida",
     "category": "faces",
     "tag": "Arte",
-    "prompt": "Who is this person?",
+    "prompt": "Can you name this face from the Spanish-speaking world?",
     "image": {
       "wiki": "Frida Kahlo"
     },
@@ -1262,7 +1262,8 @@
       }
     ],
     "explanation": "Sindici composed the music. Rafael Núñez wrote the words.",
-    "source": "https://www.cancilleria.gov.co/politica-exterior/simbolos-patrios-y-otros-datos-de-interes"
+    "source": "https://www.cancilleria.gov.co/politica-exterior/simbolos-patrios-y-otros-datos-de-interes",
+    "anthem": true
   },
   {
     "id": "culture-spain-anthem",
@@ -1284,7 +1285,8 @@
       }
     ],
     "explanation": "Spain’s decree identifies its national anthem with the historic Marcha Granadera, also known as the Marcha Real.",
-    "source": "https://www.boe.es/buscar/act.php?id=BOE-A-1997-21605"
+    "source": "https://www.boe.es/buscar/act.php?id=BOE-A-1997-21605",
+    "anthem": true
   },
   {
     "id": "culture-chile-president",
@@ -1446,7 +1448,7 @@
     "category": "faces",
     "tag": "Cine",
     "portraitGroup": "women",
-    "prompt": "Who is this person?",
+    "prompt": "Can you name this face from the Spanish-speaking world?",
     "image": {
       "wiki": "Rita Moreno",
       "portrait": "tmdb"
@@ -1477,7 +1479,7 @@
     "category": "faces",
     "tag": "Deporte",
     "portraitGroup": "women",
-    "prompt": "Who is this person?",
+    "prompt": "Can you name this face from the Spanish-speaking world?",
     "image": {
       "wiki": "Mariana Pajón"
     },
@@ -1507,7 +1509,7 @@
     "category": "faces",
     "tag": "Deporte",
     "portraitGroup": "women",
-    "prompt": "Who is this person?",
+    "prompt": "Can you name this face from the Spanish-speaking world?",
     "image": {
       "wiki": "Yulimar Rojas"
     },
@@ -1530,5 +1532,128 @@
     ],
     "explanation": "Rojas won Olympic triple jump gold for Venezuela at Tokyo 2020.",
     "source": "https://www.olympics.com/ioc/noc-news/venezuela"
+  },
+  {
+    "id": "person-alexia-putellas",
+    "entity": "alexia-putellas",
+    "category": "faces",
+    "portraitGroup": "women",
+    "prompt": "Can you name this player from Spanish football?",
+    "image": {
+      "wiki": "Alexia Putellas"
+    },
+    "hints": [
+      "UEFA named her Player of the Finals in the 2025 Women’s Nations League."
+    ],
+    "parts": [
+      {
+        "label": "Name",
+        "answers": [
+          "Alexia Putellas",
+          "Alexia",
+          "Putellas"
+        ]
+      },
+      {
+        "label": "Country",
+        "answers": [
+          "Spain",
+          "España"
+        ]
+      }
+    ],
+    "explanation": "Alexia Putellas helped Spain retain the Women’s Nations League title in 2025.",
+    "source": "https://www.uefa.com/womensnationsleague/news/02a0-1f5837287472-b7d3d2d900b9-1000--alexia-putellas-named-2025-uefa-women-s-nations-league-playe/"
+  },
+  {
+    "id": "culture-spain-anthem-lyrics",
+    "entity": "culture-spain-anthem-lyrics",
+    "category": "culture",
+    "anthem": true,
+    "prompt": "Which of these national anthems has no official lyrics?",
+    "parts": [
+      {
+        "label": "Your answer",
+        "answers": [
+          "Spain’s Marcha Real"
+        ],
+        "choices": [
+          "Spain’s Marcha Real",
+          "Mexico’s national anthem",
+          "Colombia’s national anthem",
+          "Argentina’s national anthem"
+        ]
+      }
+    ],
+    "explanation": "Spain’s decree sets out the melody and official versions of the anthem without lyrics.",
+    "source": "https://www.boe.es/buscar/act.php?id=BOE-A-1997-21605"
+  },
+  {
+    "id": "culture-mexico-anthem",
+    "entity": "culture-mexico-anthem",
+    "category": "culture",
+    "anthem": true,
+    "prompt": "Who wrote the lyrics of Mexico’s national anthem?",
+    "parts": [
+      {
+        "label": "Your answer",
+        "answers": [
+          "Francisco González Bocanegra"
+        ],
+        "choices": [
+          "Francisco González Bocanegra",
+          "Jaime Nunó",
+          "Miguel Hidalgo",
+          "Benito Juárez"
+        ]
+      }
+    ],
+    "explanation": "González Bocanegra wrote the words and Jaime Nunó composed the music.",
+    "source": "https://repositorio-inehrm.cultura.gob.mx/fototeca/himno-nacional-mexicano/"
+  },
+  {
+    "id": "culture-nations-league-2025",
+    "entity": "culture-nations-league-2025",
+    "category": "culture",
+    "anthem": false,
+    "prompt": "Which team did Spain beat in the 2025 Women’s Nations League final?",
+    "parts": [
+      {
+        "label": "Your answer",
+        "answers": [
+          "Germany"
+        ],
+        "choices": [
+          "Germany",
+          "England",
+          "France",
+          "Portugal"
+        ]
+      }
+    ],
+    "explanation": "Spain won the second leg 3–0 after a goalless first leg.",
+    "source": "https://www.uefa.com/womensnationsleague/news/02a0-1f582e61d232-fc0db0983615-1000--2025-womens-nations-league-final-second-leg-report-spain-r/"
+  },
+  {
+    "id": "culture-laliga-2026-alaves",
+    "entity": "laliga-2026-alaves",
+    "category": "culture",
+    "prompt": "Which club beat Deportivo Alavés 6–1 in LaLiga on 31 October 2026?",
+    "parts": [
+      {
+        "label": "Your answer",
+        "answers": [
+          "FC Barcelona"
+        ],
+        "choices": [
+          "FC Barcelona",
+          "Real Madrid",
+          "Real Betis",
+          "Atlético de Madrid"
+        ]
+      }
+    ],
+    "explanation": "Barcelona won 6–1 on matchday 11 of the 2026/27 LaLiga season.",
+    "source": "https://www.laliga.com/en-US/laliga-easports/results"
   }
 ]
