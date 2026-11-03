@@ -62,7 +62,10 @@ export function makeApi({store,catalog,config={},local=false,portraitLookup}) {
           if(!host&&!player)return json({error:'Rejoin with your room code and nickname.'},401);
           if(host&&!player)player=room.players[0];
           if(operation==='answer'&&req.method==='POST') {const body=await readBody(req);if(!Array.isArray(body.values)||body.values.length>3||body.values.some(v=>typeof v!=='string'||v.length>100))return json({error:'Invalid answer.'},400);submit(room,player.id,body.questionId,body.values,now);changed=true;}
-          else if(operation==='control'&&req.method==='POST'){if(!host)return json({error:'Host controls are private.'},403);const body=await readBody(req);control(room,body.action,body,now);changed=true;}
+          else if(operation==='control'&&req.method==='POST'){if(!host)return json({error:'Host controls are private.'},403);const body=await readBody(req);const stale=body.expectedPhase!==undefined&&(body.expectedPhase!==room.phase||body.expectedIndex!==room.index);
+            if(stale){
+              if(!['start','next','reveal'].includes(body.action))return json({error:'The question changed. Try again on the current round.'},409);
+            }else{control(room,body.action,body,now);changed=true;}}
           else if(operation==='media') {if(!host)return json({error:'Playback is on the host device.'},403);const q=room.questions[room.index];return json(q?.media&&['countdown','question','reveal'].includes(room.phase)&&(!url.searchParams.has('question')||url.searchParams.get('question')===q.id)?q.media:null);}
           else if(operation==='portrait'&&req.method==='GET') {
           const question=room.questions[room.index];
@@ -81,15 +84,17 @@ export function makeApi({store,catalog,config={},local=false,portraitLookup}) {
 }
 const bodies=new WeakMap();
 async function readBody(req){if(bodies.has(req))return bodies.get(req);if(Number(req.headers.get('content-length'))>200000)throw new Error('Import is too large.');const text=await req.text();if(text.length>200000)throw new Error('Import is too large.');const body=JSON.parse(text||'{}');bodies.set(req,body);return body;}
-async function imageResponse(code,req,url,store){
+async function imageResponse(code,req,url,store,catalog){
   const row=await store.get(code);if(!row||row.room.expiresAt<Date.now())return json({error:'Room expired.'},404);
   const hash=await digest(auth(req));if(!row.room.players.some(p=>p.tokenHash===hash)&&row.room.hostHash!==hash)return json({error:'Join this room first.'},401);
   step(row.room,Date.now());const q=row.room.questions[row.room.index];if(url.searchParams.has('question')&&url.searchParams.get('question')!==q?.id)return json({error:'The question changed.'},409);if(!q?.image||!['countdown','question','reveal'].includes(row.room.phase))return json({error:'No active image.'},404);
-  const key=q.image.wiki;let cached=caches.get(key);
+  const direct=catalog.find(item=>item.id===q.id)?.image?.direct;
+  const key=q.image.wiki;
+  let cached=direct?{url:direct,expiry:Infinity}:caches.get(key);
   if(!cached||cached.expiry<Date.now()){
     const endpoint='https://en.wikipedia.org/w/api.php?action=query&format=json&prop=pageimages&piprop=original&pilicense=free&titles='+encodeURIComponent(key);
-    const r=await fetch(endpoint,{headers:{'User-Agent':'LaRondaClubTrivia/1.0 (educational club game)'}});if(!r.ok)throw new Error('Photo unavailable. The host can void this round.');const data=await r.json();const page=Object.values(data.query?.pages||{})[0];const source=page?.original?.source;if(!source||new URL(source).hostname!=='upload.wikimedia.org')throw new Error('No freely licensed photo available.');
+    const r=await fetch(endpoint,{headers:{'User-Agent':'LaRondaClubTrivia/1.0 (educational club game)'}});if(!r.ok)return json({error:'The photo provider is unavailable.'},502);const data=await r.json();const page=Object.values(data.query?.pages||{})[0];const source=page?.original?.source;if(!source||new URL(source).hostname!=='upload.wikimedia.org')return json({error:'No freely licensed photo is available.'},404);
     cached={url:source,expiry:Date.now()+3600000};caches.set(key,cached);
   }
-  const image=await fetch(cached.url);if(!image.ok)throw new Error('Photo could not load.');return new Response(image.body,{headers:{'content-type':image.headers.get('content-type')||'image/jpeg','cache-control':'private, no-store','x-content-type-options':'nosniff'}});
+  const image=await fetch(cached.url);if(!image.ok)return json({error:'The photo provider could not deliver this image.'},502);return new Response(image.body,{headers:{'content-type':image.headers.get('content-type')||'image/jpeg','cache-control':'private, no-store','x-content-type-options':'nosniff'}});
 }

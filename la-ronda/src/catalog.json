@@ -907,7 +907,8 @@
     "category": "places",
     "prompt": "Where is this place?",
     "image": {
-      "wiki": "Cybele Palace"
+      "wiki": "Cybele Palace",
+      "direct": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c4/Plaza_de_Cibeles.jpg/1280px-Plaza_de_Cibeles.jpg"
     },
     "hints": [
       "Un palacio blanco junto a una fuente famosa.",
@@ -934,8 +935,9 @@
       }
     ],
     "explanation": "Palacio de Cibeles — Madrid, España.",
-    "source": "https://en.wikipedia.org/wiki/Cybele_Palace",
-    "imageRegion": "España"
+    "source": "https://commons.wikimedia.org/wiki/File:Plaza_de_Cibeles.jpg",
+    "imageRegion": "España",
+    "credit": "Plaza de Cibeles photo by Σπάρτακος, Wikimedia Commons, CC BY-SA 3.0."
   },
   {
     "id": "place-moneda",
