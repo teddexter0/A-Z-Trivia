@@ -6,7 +6,7 @@ const digest=async(v)=>Array.from(new Uint8Array(await crypto.subtle.digest('SHA
 const auth=(req)=>req.headers.get('authorization')?.replace(/^Bearer /,'')||'';
 const nickname=v=>String(v||'').trim().slice(0,24).replace(/[<>\x00-\x1f]/g,'');
 const caches=new Map();
-export function makeApi({store,catalog,config={},local=false}) {
+export function makeApi({store,catalog,config={},local=false,portraitLookup}) {
   return async function api(req) {
     const url=new URL(req.url),path=url.pathname;
     try{
@@ -16,7 +16,7 @@ export function makeApi({store,catalog,config={},local=false}) {
         const body=await readBody(req);const name=nickname(body.nickname);if(!name)return json({error:'Choose a host nickname.'},400);
         if(config.firebase?.apiKey&&!local){const r=await fetch('https://identitytoolkit.googleapis.com/v1/accounts:lookup?key='+encodeURIComponent(config.firebase.apiKey),{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({idToken:body.firebaseToken})});if(!r.ok)return json({error:'Guest identity expired. Reload and try again.'},401);}
         const history=await store.history();let imported=[];if(body.chorus)imported=importChorus(body.chorus);const playlist=body.chorusUrl||config.chorusPlaylist;if(playlist)imported.push(...await publicChorusSelection(playlist));
-        const enabled=Array.isArray(body.categories)?body.categories:['faces','places','phrases','campus','music'];
+        const enabled=Array.isArray(body.categories)?body.categories:['faces','places','phrases','culture','campus','music'];
         const pool=[...catalog,...imported].filter(q=>enabled.includes(q.category));if(!pool.length)return json({error:'Select a category with available questions.'},400);
         const count=Math.max(5,Math.min(25,Number(body.count)||15));
         const pack=makePack(pool,history,count);
@@ -31,7 +31,7 @@ export function makeApi({store,catalog,config={},local=false}) {
         for(let i=0;i<5;i++){const digits=new Uint32Array(1);crypto.getRandomValues(digits);const code=String(100000+(digits[0]%900000));room=createRoom({code,hostHash:await digest(hostToken),playerHash:await digest(playerToken),nickname:name,pack,now:Date.now(),settings:body});try{await store.insert(room);break;}catch(e){if(i===4)throw e;}}
         return json({code:room.code,hostToken,playerToken,state:snapshot(room,room.players[0].id,true)},201);
       }
-      const m=path.match(/^\/api\/rooms\/(\d{6})(?:\/(join|state|answer|control|media|image|export))?$/);
+      const m=path.match(/^\/api\/rooms\/(\d{6})(?:\/(join|state|answer|control|media|image|portrait|export))?$/);
       if(!m)return json({error:'Not found.'},404);
       const [,code,operation='state']=m;
       if(operation==='image')return await imageResponse(code,req,url,store,catalog);
@@ -53,7 +53,12 @@ export function makeApi({store,catalog,config={},local=false}) {
           if(operation==='answer'&&req.method==='POST') {const body=await readBody(req);if(!Array.isArray(body.values)||body.values.length>3||body.values.some(v=>typeof v!=='string'||v.length>100))return json({error:'Invalid answer.'},400);submit(room,player.id,body.questionId,body.values,now);changed=true;}
           else if(operation==='control'&&req.method==='POST'){if(!host)return json({error:'Host controls are private.'},403);const body=await readBody(req);control(room,body.action,body,now);changed=true;}
           else if(operation==='media') {if(!host)return json({error:'Playback is on the host device.'},403);const q=room.questions[room.index];return json(q?.media&&['question','reveal'].includes(room.phase)?q.media:null);}
-          else if(operation==='export') {if(!host||room.phase!=='finished')return json({error:'Export is available to the host after the game.'},403);return json({code,playedAt:new Date(room.createdAt).toISOString(),leaderboard:snapshot(room,player.id,host,now).leaderboard,audit:room.audit,questions:room.questions.map(q=>({id:q.id,prompt:q.prompt,answers:q.parts.map(p=>p.answers[0])})),responses:Object.values(room.answers).map(a=>({...a,player:room.players.find(p=>p.id===a.playerId)?.nickname}))});}
+          else if(operation==='portrait'&&req.method==='GET') {
+          const question=room.questions[room.index];
+          if(room.phase!=='reveal'||question?.id!==url.searchParams.get('question')||!question.image?.portrait)return json(null);
+          return json(await portraitLookup?.(question.image)||null);
+        }
+        else if(operation==='export') {if(!host||room.phase!=='finished')return json({error:'Export is available to the host after the game.'},403);return json({code,playedAt:new Date(room.createdAt).toISOString(),leaderboard:snapshot(room,player.id,host,now).leaderboard,audit:room.audit,questions:room.questions.map(q=>({id:q.id,prompt:q.prompt,answers:q.parts.map(p=>p.answers[0])})),responses:Object.values(room.answers).map(a=>({...a,player:room.players.find(p=>p.id===a.playerId)?.nickname}))});}
           else if(operation!=='state'&&operation!=='answer'&&operation!=='control')return json({error:'Method not allowed.'},405);
           result=snapshot(room,player.id,host,now);
         }

@@ -287,7 +287,8 @@
     "tag": "Música",
     "prompt": "Who is this person?",
     "image": {
-      "wiki": "Shakira"
+      "wiki": "Shakira",
+      "portrait": "spotify"
     },
     "hints": [
       "Nació en Barranquilla.",
@@ -320,7 +321,8 @@
     "tag": "Música",
     "prompt": "Who is this person?",
     "image": {
-      "wiki": "Bad Bunny"
+      "wiki": "Bad Bunny",
+      "portrait": "spotify"
     },
     "hints": [
       "Su nombre es Benito.",
@@ -355,7 +357,8 @@
     "tag": "Música",
     "prompt": "Who is this person?",
     "image": {
-      "wiki": "Rosalía"
+      "wiki": "Rosalía",
+      "portrait": "spotify"
     },
     "hints": [
       "Motomami.",
@@ -390,7 +393,8 @@
     "tag": "Música",
     "prompt": "Who is this person?",
     "image": {
-      "wiki": "Juanes"
+      "wiki": "Juanes",
+      "portrait": "spotify"
     },
     "hints": [
       "La camisa negra.",
@@ -423,7 +427,8 @@
     "tag": "Cine",
     "prompt": "Who is this person?",
     "image": {
-      "wiki": "Penélope Cruz"
+      "wiki": "Penélope Cruz",
+      "portrait": "tmdb"
     },
     "hints": [
       "Es actriz.",
@@ -458,7 +463,8 @@
     "tag": "Cine",
     "prompt": "Who is this person?",
     "image": {
-      "wiki": "Salma Hayek"
+      "wiki": "Salma Hayek",
+      "portrait": "tmdb"
     },
     "hints": [
       "Interpretó a Frida Kahlo.",
@@ -1178,54 +1184,6 @@
     "source": "https://dle.rae.es/"
   },
   {
-    "id": "campus-history",
-    "entity": "campus-history",
-    "category": "campus",
-    "prompt": "Strathmore College began in which year?",
-    "hints": [
-      "En la década de los sesenta."
-    ],
-    "parts": [
-      {
-        "label": "Año / Year",
-        "answers": [
-          "1961"
-        ],
-        "choices": [
-          "1961",
-          "1975",
-          "1989",
-          "2002"
-        ]
-      }
-    ],
-    "explanation": "Strathmore’s official history dates the college’s establishment to 1961, by a group of professionals encouraged by St Josemaría Escrivá.",
-    "source": "https://strathmore.edu/history/"
-  },
-  {
-    "id": "campus-josemaria",
-    "entity": "campus-josemaria",
-    "category": "campus",
-    "prompt": "Who inspired and encouraged the founding of Strathmore College?",
-    "hints": [
-      "Fundó el Opus Dei."
-    ],
-    "parts": [
-      {
-        "label": "Persona / Person",
-        "answers": [
-          "Josemaría Escrivá",
-          "Josemaria Escriva",
-          "Saint Josemaria Escriva",
-          "St Josemaria Escriva",
-          "Josemaria"
-        ]
-      }
-    ],
-    "explanation": "St Josemaría Escrivá inspired and encouraged the professionals who started the college. He founded Opus Dei.",
-    "source": "https://strathmore.edu/history/"
-  },
-  {
     "id": "campus-cinema",
     "entity": "campus-cinema",
     "category": "campus",
@@ -1250,5 +1208,225 @@
     ],
     "explanation": "The public club listing advertised Embassy of Spain film nights at Unseen Nairobi, September 1–3, 2026.",
     "source": "https://clubs.strathmore.edu/pages/events/01M0Q12PB6QPN32GD1SQDF90K8"
+  },
+  {
+    "id": "culture-colombia-red",
+    "entity": "culture-colombia-red",
+    "category": "culture",
+    "prompt": "A Colombian court ruling describes the red in the flag as a reminder of what?",
+    "parts": [
+      {
+        "label": "Your answer",
+        "answers": [
+          "Blood shed by independence heroes"
+        ],
+        "choices": [
+          "Blood shed by independence heroes",
+          "The Amazon River",
+          "The coffee harvest",
+          "The Andes at sunset"
+        ]
+      }
+    ],
+    "explanation": "The court used the red stripe as an example of how national symbols recall independence.",
+    "source": "https://www.corteconstitucional.gov.co/relatoria/1997/c-469-97.htm"
+  },
+  {
+    "id": "culture-colombia-anthem",
+    "entity": "culture-colombia-anthem",
+    "category": "culture",
+    "prompt": "Who composed the music for Colombia’s national anthem?",
+    "parts": [
+      {
+        "label": "Your answer",
+        "answers": [
+          "Oreste Sindici"
+        ],
+        "choices": [
+          "Oreste Sindici",
+          "Rafael Núñez",
+          "Carlos Gardel",
+          "Astor Piazzolla"
+        ]
+      }
+    ],
+    "explanation": "Sindici composed the music. Rafael Núñez wrote the words.",
+    "source": "https://www.cancilleria.gov.co/politica-exterior/simbolos-patrios-y-otros-datos-de-interes"
+  },
+  {
+    "id": "culture-spain-anthem",
+    "entity": "culture-spain-anthem",
+    "category": "culture",
+    "prompt": "Which anthem would you hear when Spain wins Olympic gold?",
+    "parts": [
+      {
+        "label": "Your answer",
+        "answers": [
+          "Marcha Real"
+        ],
+        "choices": [
+          "Marcha Real",
+          "La Marseillaise",
+          "Himno de Riego",
+          "A Portuguesa"
+        ]
+      }
+    ],
+    "explanation": "Spain’s decree identifies its national anthem with the historic Marcha Granadera, also known as the Marcha Real.",
+    "source": "https://www.boe.es/buscar/act.php?id=BOE-A-1997-21605"
+  },
+  {
+    "id": "culture-chile-president",
+    "entity": "culture-chile-president",
+    "category": "culture",
+    "prompt": "Who became Chile’s first woman president in 2006?",
+    "parts": [
+      {
+        "label": "Your answer",
+        "answers": [
+          "Michelle Bachelet"
+        ],
+        "choices": [
+          "Michelle Bachelet",
+          "Isabel Allende",
+          "Gabriela Mistral",
+          "Violeta Parra"
+        ]
+      }
+    ],
+    "explanation": "Bachelet first took office in 2006 and returned for a second term in 2014.",
+    "source": "https://www.memoriachilena.gob.cl/602/w3-article-92972.html"
+  },
+  {
+    "id": "culture-mexico-president",
+    "entity": "culture-mexico-president",
+    "category": "culture",
+    "prompt": "Who was declared Mexico’s president-elect in 2024, the first woman elected to the office?",
+    "parts": [
+      {
+        "label": "Your answer",
+        "answers": [
+          "Claudia Sheinbaum"
+        ],
+        "choices": [
+          "Claudia Sheinbaum",
+          "Xóchitl Gálvez",
+          "Delfina Gómez",
+          "Alicia Bárcena"
+        ]
+      }
+    ],
+    "explanation": "The official declaration named Claudia Sheinbaum Pardo president-elect in 2024.",
+    "source": "https://sidof.segob.gob.mx/notas/docFuente/5737865"
+  },
+  {
+    "id": "culture-mexico-flag",
+    "entity": "culture-mexico-flag",
+    "category": "culture",
+    "prompt": "On Mexico’s flag, what is the eagle perched on?",
+    "parts": [
+      {
+        "label": "Your answer",
+        "answers": [
+          "A prickly pear cactus"
+        ],
+        "choices": [
+          "A prickly pear cactus",
+          "A palm tree",
+          "A stone pyramid",
+          "An agave plant"
+        ]
+      }
+    ],
+    "explanation": "The eagle stands on a nopal, a prickly pear cactus, in the national coat of arms.",
+    "source": "https://www.gob.mx/agn/articulos/conoce-los-simbolos-nacionales-elementos-fundamentales-de-nuestra-identidad?idiom=es"
+  },
+  {
+    "id": "culture-rio-tango",
+    "entity": "culture-rio-tango",
+    "category": "culture",
+    "prompt": "Which two countries share UNESCO’s tango listing?",
+    "parts": [
+      {
+        "label": "Your answer",
+        "answers": [
+          "Argentina and Uruguay"
+        ],
+        "choices": [
+          "Argentina and Uruguay",
+          "Chile and Peru",
+          "Mexico and Cuba",
+          "Spain and Portugal"
+        ]
+      }
+    ],
+    "explanation": "Tango grew around the Río de la Plata, especially in Buenos Aires and Montevideo.",
+    "source": "https://ich.unesco.org/en/RL/tango-00258"
+  },
+  {
+    "id": "culture-peru-ceviche",
+    "entity": "culture-peru-ceviche",
+    "category": "culture",
+    "prompt": "UNESCO listed the traditions around preparing ceviche from which country?",
+    "parts": [
+      {
+        "label": "Your answer",
+        "answers": [
+          "Peru"
+        ],
+        "choices": [
+          "Peru",
+          "Spain",
+          "Guatemala",
+          "Paraguay"
+        ]
+      }
+    ],
+    "explanation": "The listing recognizes Peruvian traditions around the dish, including regional ways of preparing it.",
+    "source": "https://ich.unesco.org/en/RL/practices-and-meanings-associated-with-the-preparation-and-consumption-of-ceviche-an-expression-of-peruvian-traditional-cuisine-01952"
+  },
+  {
+    "id": "culture-mexico-ofrenda",
+    "entity": "culture-mexico-ofrenda",
+    "category": "culture",
+    "prompt": "At Día de Muertos, who are the offerings placed on home altars meant to welcome?",
+    "parts": [
+      {
+        "label": "Your answer",
+        "answers": [
+          "Deceased loved ones"
+        ],
+        "choices": [
+          "Deceased loved ones",
+          "Newlyweds",
+          "Travellers",
+          "The first guests of spring"
+        ]
+      }
+    ],
+    "explanation": "Families prepare food, flowers and offerings for relatives and loved ones who have died.",
+    "source": "https://ich.unesco.org/en/RL/day-of-the-dead-heritage-00054"
+  },
+  {
+    "id": "phrase-sobremesa",
+    "entity": "sobremesa",
+    "category": "phrases",
+    "prompt": "Lunch is over, but nobody has left the table. What does sobremesa describe?",
+    "parts": [
+      {
+        "label": "Your answer",
+        "answers": [
+          "Time spent at the table after eating"
+        ],
+        "choices": [
+          "Time spent at the table after eating",
+          "The first course",
+          "The bill",
+          "The tablecloth"
+        ]
+      }
+    ],
+    "explanation": "Sobremesa can mean the time you spend at the table once the meal is over.",
+    "source": "https://dle.rae.es/sobremesa"
   }
 ]
