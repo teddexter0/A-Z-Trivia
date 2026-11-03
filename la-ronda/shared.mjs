@@ -11,7 +11,7 @@ export async function mountRonda(server,{prefix='/la-ronda'}={}){
   const config=JSON.parse(await readFile(new URL('src/config.json',root),'utf8'));config.transport='websocket';
   config.chorusPlaylist=process.env.RONDA_CHORUS_PLAYLIST;
   const api=makeApi({store:new FirebaseStore(credential),catalog,config,local:false,portraitLookup:makePortraitLookup(process.env)});
-  const assets=new Map(await Promise.all([['/','web/index.html','text/html'],['/app.js','web/app.js','text/javascript'],['/style.css','web/style.css','text/css']].map(async([p,file,type])=>[p,{text:await readFile(new URL(file,root),'utf8'),type}])));
+  const assets=new Map(await Promise.all([['/','web/index.html','text/html'],['/audio','web/audio.html','text/html'],['/app.js','web/app.js','text/javascript'],['/style.css','web/style.css','text/css']].map(async([p,file,type])=>[p,{text:await readFile(new URL(file,root),'utf8'),type}])));
   attachRealtime(server,api,{socketPath:prefix+'/live'});
   return async(req,res)=>{
     try{

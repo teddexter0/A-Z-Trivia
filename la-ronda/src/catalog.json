@@ -267,7 +267,8 @@
     "tag": "Fútbol",
     "prompt": "Can you name this face from the Spanish-speaking world?",
     "image": {
-      "wiki": "Luis Suárez"
+      "wiki": "Luis Suárez (Uruguayan footballer)",
+      "direct": "https://upload.wikimedia.org/wikipedia/commons/b/b1/Luis_Su%C3%A1rez_in_2018.jpg"
     },
     "hints": [
       "Delantero uruguayo.",
@@ -292,9 +293,10 @@
       }
     ],
     "explanation": "The Uruguayan forward played for Liverpool and Barcelona.",
-    "source": "https://en.wikipedia.org/wiki/Luis_Su%C3%A1rez",
+    "source": "https://commons.wikimedia.org/wiki/File:Luis_Su%C3%A1rez_in_2018.jpg",
     "portraitGroup": "men",
-    "imageRegion": "Uruguay"
+    "imageRegion": "Uruguay",
+    "credit": "Luis Suárez in 2018 by Anna Nessi, Wikimedia Commons, CC BY-SA 3.0."
   },
   {
     "id": "person-shakira",

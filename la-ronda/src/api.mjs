@@ -88,13 +88,45 @@ async function imageResponse(code,req,url,store,catalog){
   const row=await store.get(code);if(!row||row.room.expiresAt<Date.now())return json({error:'Room expired.'},404);
   const hash=await digest(auth(req));if(!row.room.players.some(p=>p.tokenHash===hash)&&row.room.hostHash!==hash)return json({error:'Join this room first.'},401);
   step(row.room,Date.now());const q=row.room.questions[row.room.index];if(url.searchParams.has('question')&&url.searchParams.get('question')!==q?.id)return json({error:'The question changed.'},409);if(!q?.image||!['countdown','question','reveal'].includes(row.room.phase))return json({error:'No active image.'},404);
-  const direct=catalog.find(item=>item.id===q.id)?.image?.direct;
-  const key=q.image.wiki;
-  let cached=direct?{url:direct,expiry:Infinity}:caches.get(key);
-  if(!cached||cached.expiry<Date.now()){
-    const endpoint='https://en.wikipedia.org/w/api.php?action=query&format=json&prop=pageimages&piprop=original&pilicense=free&titles='+encodeURIComponent(key);
-    const r=await fetch(endpoint,{headers:{'User-Agent':'LaRondaClubTrivia/1.0 (educational club game)'}});if(!r.ok)return json({error:'The photo provider is unavailable.'},502);const data=await r.json();const page=Object.values(data.query?.pages||{})[0];const source=page?.original?.source;if(!source||new URL(source).hostname!=='upload.wikimedia.org')return json({error:'No freely licensed photo is available.'},404);
-    cached={url:source,expiry:Date.now()+3600000};caches.set(key,cached);
+  const {wiki,direct}=catalog.find(item=>item.id===q.id)?.image||q.image;
+  const headers={'User-Agent':'LaRondaClubTrivia/1.0 (educational club game)'};
+  const get=async endpoint=>{
+    const response=await fetch(endpoint,{headers,signal:AbortSignal.timeout(3000)});
+    if(!response.ok)throw new Error('Photo provider unavailable');
+    return response.json();
+  };
+  const wikiPhoto=async()=>{
+    const data=await get('https://en.wikipedia.org/w/api.php?format=json&action=query&redirects=1&prop=pageimages&piprop=thumbnail&pithumbsize=960&pilicense=free&titles='+encodeURIComponent(wiki));
+    return Object.values(data.query?.pages||{})[0]?.thumbnail?.source;
+  };
+  const commonsPhoto=async()=>{
+    const data=await get('https://www.wikidata.org/w/api.php?format=json&action=wbgetentities&sites=enwiki&props=claims&titles='+encodeURIComponent(wiki));
+    const claim=Object.values(data.entities||{})[0]?.claims?.P18?.[0]?.mainsnak?.datavalue?.value;
+    if(typeof claim!=='string')return null;
+    const commons=await get('https://commons.wikimedia.org/w/api.php?format=json&action=query&prop=imageinfo&iiprop=url%7Cextmetadata&iiurlwidth=960&titles='+encodeURIComponent('File:'+claim));
+    const photo=Object.values(commons.query?.pages||{})[0]?.imageinfo?.[0];
+    return photo?.extmetadata?.LicenseShortName?.value.match(/^(?:CC |Public domain)/i)?photo.thumburl||photo.url:null;
+  };
+  const originalPhoto=async()=>{
+    const data=await get('https://en.wikipedia.org/w/api.php?format=json&action=query&redirects=1&prop=pageimages&piprop=original&pilicense=free&titles='+encodeURIComponent(wiki));
+    return Object.values(data.query?.pages||{})[0]?.original?.source;
+  };
+  const key=direct||wiki;
+  const cached=caches.get(key);
+  const attempted=new Set();
+  for(const resolve of [()=>cached?.expiry>Date.now()?cached.url:null,()=>direct,wikiPhoto,commonsPhoto,originalPhoto]){
+    try{
+      const source=await resolve();
+      if(!source||attempted.has(source))continue;
+      attempted.add(source);
+      const parsed=new URL(source);
+      if(parsed.protocol!=='https:'||!['upload.wikimedia.org','thumb.wikimedia.org'].includes(parsed.hostname))continue;
+      const image=await fetch(parsed,{headers,signal:AbortSignal.timeout(3500),redirect:'error'});
+      const type=image.headers.get('content-type');
+      if(!image.ok||!type?.startsWith('image/'))continue;
+      caches.set(key,{url:source,expiry:Date.now()+3600000});
+      return new Response(image.body,{headers:{'content-type':type,'cache-control':'private, no-store','x-content-type-options':'nosniff'}});
+    }catch{ /* Try the next verified image route. */ }
   }
-  const image=await fetch(cached.url);if(!image.ok)return json({error:'The photo provider could not deliver this image.'},502);return new Response(image.body,{headers:{'content-type':image.headers.get('content-type')||'image/jpeg','cache-control':'private, no-store','x-content-type-options':'nosniff'}});
+  return json({error:'The photo could not load. Use the clues or void the round.'},502);
 }
