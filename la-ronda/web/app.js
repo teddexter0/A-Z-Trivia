@@ -10,8 +10,8 @@ function home(){view='home';app.innerHTML=`<div class="hero"><section><div class
 function setup(){view='setup';app.innerHTML=`<section class="setup"><div class="section-top"><div><div class="eyebrow">HOST LESS. PLAY MORE.</div><h2>Make it a good Thursday.</h2></div><button class="btn secondary small" data-action="home">← Back</button></div><p class="intro">Pick the mix. We’ll take care of the turns, the reveals and the scores. You get to join in.</p><form id="create"><div class="setup-grid"><div class="panel"><h3>The room</h3><label>Your playing nickname<input name="nickname" autocomplete="nickname" maxlength="24" required></label><div class="field-row"><label style="flex:1">Questions<select name="count"><option>10</option><option selected>15</option><option>20</option><option>25</option></select></label><label style="flex:1">Seconds per question<select name="seconds"><option value="20">20 seconds</option><option value="30" selected>30 seconds</option><option value="45">45 seconds</option><option value="60">60 seconds</option></select></label></div><label class="check"><input type="checkbox" name="auto" checked> Advance automatically</label><p class="muted spaced" style="font-size:15px">Everyone within the answer window earns equal points. Ties stay tied. Connection speed isn’t a skill.</p></div><div class="panel"><h3>The mix</h3><div class="checks">${Object.entries(labels).map(([id,label])=>`<label class="check"><input type="checkbox" name="category" value="${id}" checked>${label}</label>`).join('')}</div><label class="spaced">Chorus Clip playlist (optional)<input id="chorus-link" name="chorusUrl" type="url" placeholder="Paste your playlist share link"></label><p class="muted">We’ll load the songs when you start. This browser remembers your link for next time.</p></div></div><div class="setup-actions"><span class="muted" style="font-size:15px">The room expires after 8 hours. Save your results at the end.</span><button class="btn orange" type="submit">Create my room ↗</button></div></form></section>`;$('#chorus-link').value=localStorage.getItem('ronda-chorus-link')||'';
  if(state?.code===session?.code)$('#create input[name=nickname]').value=state?.leaderboard.find(p=>p.id===state.playerId)?.nickname||'';}
 function persist(){localStorage.setItem('ronda-session',JSON.stringify(session));}
-function accept(next){if(view!=='room'||next.code!==session?.code)return;const before=state;state=next;offset=next.serverNow-Date.now();const sig=JSON.stringify([next.code,next.phase,next.index,next.paused,next.submitted,next.leaderboard,next.responses?.map(r=>[r.playerId,r.points]),next.question?.voided]);if(view!=='room'||sig!==signature){signature=sig;renderRoom();if(before&&before.phase!==next.phase&&next.phase==='reveal')beep();}updateLive();}
-function stopConnection(){roomConnection++;liveConnection?.close();liveConnection=null;clearTimeout(pollTimer);streamAbort?.abort();}
+function accept(next){if(view!=='room'||next.code!==session?.code)return;const before=state;state=next;offset=next.serverNow-Date.now();const sig=JSON.stringify([next.code,next.phase,next.index,next.paused,next.submitted,next.leaderboard,next.responses?.map(r=>[r.playerId,r.points]),next.question?.voided]);if(view!=='room'||sig!==signature){signature=sig;renderRoom();if(before&&before.phase!==next.phase&&next.phase==='reveal')beep();}syncChorus(next);updateLive();}
+function stopConnection(){stopChorus();roomConnection++;liveConnection?.close();liveConnection=null;clearTimeout(pollTimer);streamAbort?.abort();}
 async function connect(){stopConnection();signature='';view='room';try{accept(await request('/api/rooms/'+session.code+'/state'));if(config.transport==='websocket')liveSocket();else if(config.transport==='sse')stream();else poll();}catch(e){toast(e.message);home();}}
 async function poll(){const connection=roomConnection;try{const next=await request('/api/rooms/'+session.code+'/state');if(connection!==roomConnection)return;accept(next);$('.connection')?.classList.remove('bad');if($('.connection'))$('.connection').textContent='● Connected · server clock';}catch(e){if($('.connection')){$('.connection').classList.add('bad');$('.connection').textContent='Reconnecting… answers need server receipt';}}if(connection===roomConnection&&view==='room'&&state?.phase!=='finished')pollTimer=setTimeout(poll,850);}
 async function stream(){streamAbort=new AbortController();try{const r=await fetch('/api/rooms/'+session.code+'/events',{headers:{authorization:'Bearer '+(session.hostToken||session.playerToken)},signal:streamAbort.signal});if(!r.ok)throw new Error('Realtime unavailable');const reader=r.body.getReader(),decoder=new TextDecoder();let buffer='';while(view==='room'){const {value,done}=await reader.read();if(done)break;buffer+=decoder.decode(value,{stream:true});let at;while((at=buffer.indexOf('\n'))>=0){const line=buffer.slice(0,at);buffer=buffer.slice(at+1);if(line)accept(JSON.parse(line));}}}catch(e){if(e.name==='AbortError')return;}if(view==='room')poll();}
@@ -22,7 +22,7 @@ function renderRoom(){view='room';const s=state,q=s.question;const reveal=s.phas
  if(s.phase==='question'&&!s.submitted){const saved=drafts[q.id]||[];document.querySelectorAll('[data-answer-index]').forEach(input=>{input.value=saved[Number(input.dataset.answerIndex)]||'';});document.querySelectorAll('.choice').forEach(btn=>{btn.classList.toggle('selected',saved[0]===btn.dataset.value);});}
  updateLive();}
 function questionMedia(q,reveal){if(q.hasImage)return '<div class="photo-wrap"><img id="question-photo" alt="Mystery photograph for this round" draggable="false"><canvas id="scratch" aria-hidden="true"></canvas><span class="photo-label">'+(reveal?'The reveal':'Watch the picture emerge…')+'</span></div>';
- if(q.media)return `<div class="music-art"><div class="disc"></div></div><p class="muted" style="text-align:center">Listen to the host’s speakers. Name either part—or both.</p>${state.isHost?'<button class="btn secondary spaced" data-action="play">Open host chorus player ♫</button><p class="muted" style="font-size:13px;margin-top:10px">Keep the player on your laptop, away from the shared display. Pause the round while buffering.</p>':''}`;
+ if(q.media)return `<div class="music-art"><div class="disc"></div></div><p class="muted" style="text-align:center">Listen to the host’s speakers. Name either part—or both.</p>`;
  return `<div class="question-text">${esc(q.category==='phrases'?'Piensa un poquito.':'Una conexión con nuestro campus.')}</div>`;}
 function answerForm(s){if(s.submitted)return '<div class="receipt">✓ Answer received by the server.<br><span style="font-size:15px">Locked in. Partial credit appears at the reveal.</span></div>';const q=s.question;return `<form id="answer" class="answers">${q.parts[0].choices?`<div class="choice-grid">${q.parts[0].choices.map(v=>`<button type="button" class="choice" data-value="${esc(v)}">${esc(v)}</button>`).join('')}</div>`:`<div class="answer-fields">${q.parts.map((p,i)=>`<label>${esc(p.label)}<input data-answer-index="${i}" maxlength="100" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="${esc(p.placeholder||'Your answer')}"></label>`).join('')}</div>`}<div class="submit-row"><span class="muted" style="font-size:14px">One attempt · <span id="answer-count">${s.answerCount}</span> / ${s.leaderboard.length} answered</span><button class="btn" type="submit">Lock it in ↗</button></div></form>`;}
 function revealPanel(s){const q=s.question;return `<div class="reveal"><div class="tag">${q.voided?'ROUND VOIDED · NO POINTS':'THE ANSWER'}</div><div id="answer-portrait"></div><div class="reveal-answer">${q.answers.map(esc).join(' <span style="color:#8d99b1">/</span> ')}</div><p class="muted">${esc(q.explanation)}</p>${s.receipt?`<div class="spaced">${s.receipt.parts.map(p=>`<div class="part-result"><div>${p.correct?'✓':'○'} ${esc(p.value||'No answer')}<br><span>${esc(p.label)}</span></div><strong>${q.voided?0:Math.round(p.points)} pts</strong></div>`).join('')}${!q.voided&&s.receipt.speedBonus?'<p>Speed bonus: +'+s.receipt.speedBonus+' pts</p>':''}</div>`:'<p class="muted spaced">No answer submitted this round.</p>'}${q.source?`<a class="source" target="_blank" rel="noopener" href="${esc(q.source)}">Check the source${q.hasImage?' / photograph credits':''} ↗</a>`:''}</div>${s.isHost?corrections(s):''}`;}
@@ -88,8 +88,73 @@ async function createHostedRoom(body){
 async function guestIdentity(){if(!config.firebase?.apiKey)return null;const saved=JSON.parse(sessionStorage.getItem('ronda-firebase')||'null');if(saved?.expires>Date.now())return saved.token;const r=await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key='+encodeURIComponent(config.firebase.apiKey),{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({returnSecureToken:true})});const data=await r.json();if(!r.ok)throw new Error('Firebase guest sign-in is unavailable. '+(data.error?.message||''));sessionStorage.setItem('ronda-firebase',JSON.stringify({token:data.idToken,expires:Date.now()+3500000}));return data.idToken;}
 app.addEventListener('input',e=>{if(e.target.dataset.answerIndex!==undefined){const values=drafts[state.question.id]||[];values[Number(e.target.dataset.answerIndex)]=e.target.value;drafts[state.question.id]=values;}});
 app.addEventListener('submit',async e=>{e.preventDefault();const form=e.target,button=form.querySelector('button[type="submit"]');if(button)button.disabled=true;try{if(form.id==='join'){const f=new FormData(form),code=String(f.get('code'));const data=await request('/api/rooms/'+code+'/join',{nickname:f.get('nickname')},null);session={code,playerToken:data.playerToken};persist();await connect();}else if(form.id==='create'){const f=new FormData(form);localStorage.setItem('ronda-chorus-link',String(f.get('chorusUrl')||''));const data=await createHostedRoom({nickname:f.get('nickname'),count:Number(f.get('count')),seconds:Number(f.get('seconds')),auto:f.has('auto'),speedBonus:f.has('speedBonus'),categories:f.getAll('category'),chorusUrl:f.get('chorusUrl')||null});session={code:data.code,hostToken:data.hostToken,playerToken:data.playerToken};persist();await connect();}else if(form.id==='answer'){const q=state.question,values=drafts[q.id]||[];if(!values.some(v=>String(v||'').trim()))throw new Error('Add at least one answer.');accept(await request('/api/rooms/'+session.code+'/answer',{questionId:q.id,values:q.parts.map((_,i)=>values[i]||'')}));}}catch(e){toast(e.message);}finally{if(button)button.disabled=false;}});
-app.addEventListener('click',async e=>{const choice=e.target.closest('.choice');if(choice){drafts[state.question.id]=[choice.dataset.value];document.querySelectorAll('.choice').forEach(b=>b.classList.toggle('selected',b===choice));return;}const btn=e.target.closest('[data-action]');if(!btn)return;const action=btn.dataset.action;try{if(action==='home'){stopConnection();home();}else if(action==='setup'){stopConnection();setup();}else if(action==='resume'){await connect();}else if(action==='copy'){await navigator.clipboard.writeText(location.origin+BASE+'/?room='+session.code);toast('Invite link copied.');}else if(action==='export'){const csvCell=value=>'"'+String(value).replace(/^[=+@\-\t\r\n]/,"'$&").replaceAll('"','""')+'"';const rows=[['Rank','Player','Points'],...state.leaderboard.map(p=>[p.rank,p.nickname,p.points])];const url=URL.createObjectURL(new Blob(['\uFEFF'+rows.map(row=>row.map(csvCell).join(',')).join('\r\n')],{type:'text/csv;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download='la-ronda-'+session.code+'-results.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),2000);}else if(action==='play'){await play();}else{if(action==='finish'&&!confirm('End this session and show final scores?'))return;const payload={action};if(action==='adjust'){payload.playerId=btn.dataset.player;payload.part=Number(btn.dataset.part);payload.correct=btn.dataset.correct==='true';payload.reason=document.querySelector('[data-reason-player="'+btn.dataset.player+'"]').value;}if(action==='void')payload.reason=prompt('Why void this round?','Photo / audio unavailable');if(action==='void'&&payload.reason===null)return;btn.disabled=true;accept(await request('/api/rooms/'+session.code+'/control',payload));}}catch(e){toast(e.message);}finally{btn.disabled=false;}});
-async function play(){const media=await request('/api/rooms/'+session.code+'/media');if(!media)throw new Error('No chorus available for this round.');let dialog=document.querySelector('dialog');if(!dialog){dialog=document.createElement('dialog');document.body.appendChild(dialog);}dialog.innerHTML=`<h3 style="margin-bottom:15px">Host playback · keep off the shared screen</h3><iframe title="Chorus Clip player" allow="autoplay; encrypted-media" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen src="https://www.youtube.com/embed/${encodeURIComponent(media.videoId)}?start=${Math.floor(media.start)}&end=${Math.ceil(media.end)}&autoplay=1"></iframe><p class="muted" style="font-size:14px;margin-top:15px">YouTube’s title and controls remain visible here. Participants use the game screen. Playback may require a click.</p><button class="btn secondary">Close player</button>`;dialog.querySelector('button').onclick=()=>{dialog.close();dialog.innerHTML='';};dialog.showModal();}
+app.addEventListener('click',async e=>{const choice=e.target.closest('.choice');if(choice){drafts[state.question.id]=[choice.dataset.value];document.querySelectorAll('.choice').forEach(b=>b.classList.toggle('selected',b===choice));return;}const btn=e.target.closest('[data-action]');if(!btn)return;const action=btn.dataset.action;try{if(action==='home'){stopConnection();home();}else if(action==='setup'){stopConnection();setup();}else if(action==='resume'){await connect();}else if(action==='copy'){await navigator.clipboard.writeText(location.origin+BASE+'/?room='+session.code);toast('Invite link copied.');}else if(action==='export'){const csvCell=value=>'"'+String(value).replace(/^[=+@\-\t\r\n]/,"'$&").replaceAll('"','""')+'"';const rows=[['Rank','Player','Points'],...state.leaderboard.map(p=>[p.rank,p.nickname,p.points])];const url=URL.createObjectURL(new Blob(['\uFEFF'+rows.map(row=>row.map(csvCell).join(',')).join('\r\n')],{type:'text/csv;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download='la-ronda-'+session.code+'-results.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),2000);}else{if(action==='finish'&&!confirm('End this session and show final scores?'))return;const payload={action};if(action==='adjust'){payload.playerId=btn.dataset.player;payload.part=Number(btn.dataset.part);payload.correct=btn.dataset.correct==='true';payload.reason=document.querySelector('[data-reason-player="'+btn.dataset.player+'"]').value;}if(action==='void')payload.reason=prompt('Why void this round?','Photo / audio unavailable');if(action==='void'&&payload.reason===null)return;btn.disabled=true;accept(await request('/api/rooms/'+session.code+'/control',payload));}}catch(e){toast(e.message);}finally{btn.disabled=false;}});
+let chorus=null,youtubeReady;
+function stopChorus(){
+  const previous=chorus;
+  chorus=null;
+  previous?.player?.destroy();
+  previous?.deck.remove();
+}
+function loadYouTube(){
+  if(window.YT?.Player)return Promise.resolve(window.YT);
+  if(youtubeReady)return youtubeReady;
+  youtubeReady=new Promise((resolve,reject)=>{
+    const script=document.createElement('script');
+    script.src='https://www.youtube.com/iframe_api';
+    const timeout=setTimeout(()=>{script.remove();reject(new Error('Player timed out.'));},12000);
+    window.onYouTubeIframeAPIReady=()=>{clearTimeout(timeout);resolve(window.YT);};
+    script.onerror=()=>{clearTimeout(timeout);script.remove();reject(new Error('Player unavailable.'));};
+    document.head.append(script);
+  }).catch(error=>{youtubeReady=null;throw error;});
+  return youtubeReady;
+}
+function syncChorus(room){
+  if(!room.isHost||room.phase!=='question'||!room.question?.media){stopChorus();return;}
+  const key=room.code+':'+room.question.id;
+  if(chorus?.key===key){
+    if(chorus.paused!==room.paused){
+      chorus.paused=room.paused;
+      if(room.paused)chorus.player?.pauseVideo?.();
+      else if(!chorus.ended)chorus.player?.playVideo?.();
+    }
+    return;
+  }
+  stopChorus();
+  const deck=document.createElement('aside');
+  deck.className='chorus-deck';
+  deck.innerHTML='<div><strong>Host audio</strong><p role="status">Loading the chorus…</p><small>Share the join link on the big screen to keep the answer hidden.</small></div><div class="chorus-embed"></div>';
+  app.before(deck);
+  const current={key,deck,paused:room.paused,ended:false,player:null};
+  chorus=current;
+  const status=message=>{if(chorus===current)deck.querySelector('[role=status]').textContent=message;};
+  Promise.all([request('/api/rooms/'+room.code+'/media?question='+encodeURIComponent(room.question.id)),loadYouTube()]).then(([media,YT])=>{
+    if(chorus!==current)return;
+    if(!media){status('This chorus is unavailable. You can void this question.');return;}
+    const clip={videoId:media.videoId,startSeconds:media.start,endSeconds:media.end};
+    current.player=new YT.Player(deck.querySelector('.chorus-embed'),{
+      videoId:media.videoId,
+      playerVars:{playsinline:1,origin:location.origin,start:Math.floor(media.start),end:Math.ceil(media.end)},
+      events:{
+        onReady:({target})=>{
+          if(chorus!==current)return;
+          if(current.paused)target.cueVideoById(clip);
+          else target.loadVideoById(clip);
+        },
+        onAutoplayBlocked:()=>status('Your browser blocked autoplay. Press play in the player.'),
+        onStateChange:({data,target})=>{
+          if(chorus!==current)return;
+          if(data===YT.PlayerState.PLAYING){
+            if(current.paused)target.pauseVideo();
+            else status('Playing the chorus');
+          }
+          if(data===YT.PlayerState.ENDED){current.ended=true;status('Chorus complete');}
+        },
+        onError:()=>status('This video cannot play here. You can void this question.')
+      }
+    });
+  }).catch(()=>status('The chorus could not load. You can void this question.'));
+}
 $('#sound').onclick=()=>{sound=!sound;$('#sound').textContent=sound?'♫':'♩';toast(sound?'Game sounds on.':'Game sounds off.');if(sound)beep();};
 function beep(){if(!sound)return;try{const C=window.AudioContext||window.webkitAudioContext,c=new C(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=620;g.gain.setValueAtTime(.05,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.2);o.start();o.stop(c.currentTime+.2);setTimeout(()=>c.close(),300);}catch{}}
 try{session=JSON.parse(localStorage.getItem('ronda-session')||'null');}catch{localStorage.removeItem('ronda-session');}

@@ -7,10 +7,14 @@ export function makePack(catalog, history = [], count = 15, rng = Math.random, c
   const fresh=shuffled(allowed.filter(q=>!recent.has(q.entity)),rng);
   const old=shuffled(allowed.filter(q=>recent.has(q.entity)),rng);
   const pool=[...fresh,...old], out=[], used=new Set();
-  let previousCategory='', previousStyle='';
+  let previousCategory='', previousStyle='', previousPortraitGroup='';
   while(out.length<count){
     const candidates=pool.filter(q=>!used.has(q.entity)); if(!candidates.length)break;
-    const q=candidates.find(q=>q.category!==previousCategory)||candidates[0];
+    const first=candidates.find(q=>q.category!==previousCategory)||candidates[0];
+    const q=first.portraitGroup&&first.portraitGroup===previousPortraitGroup
+      ?candidates.find(q=>q.category===first.category&&recent.has(q.entity)===recent.has(first.entity)&&q.portraitGroup&&q.portraitGroup!==previousPortraitGroup)||first
+      :first;
+    if(q.portraitGroup)previousPortraitGroup=q.portraitGroup;
     const styles=q.image?['scratch','tiles','zoom']:['clues'];
     const style=shuffled(styles.filter(s=>s!==previousStyle),rng)[0]||styles[0];
     out.push({...copy(q),style});used.add(q.entity);previousCategory=q.category;previousStyle=style;

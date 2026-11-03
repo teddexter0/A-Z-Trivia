@@ -52,7 +52,7 @@ export function makeApi({store,catalog,config={},local=false,portraitLookup}) {
           if(host&&!player)player=room.players[0];
           if(operation==='answer'&&req.method==='POST') {const body=await readBody(req);if(!Array.isArray(body.values)||body.values.length>3||body.values.some(v=>typeof v!=='string'||v.length>100))return json({error:'Invalid answer.'},400);submit(room,player.id,body.questionId,body.values,now);changed=true;}
           else if(operation==='control'&&req.method==='POST'){if(!host)return json({error:'Host controls are private.'},403);const body=await readBody(req);control(room,body.action,body,now);changed=true;}
-          else if(operation==='media') {if(!host)return json({error:'Playback is on the host device.'},403);const q=room.questions[room.index];return json(q?.media&&['question','reveal'].includes(room.phase)?q.media:null);}
+          else if(operation==='media') {if(!host)return json({error:'Playback is on the host device.'},403);const q=room.questions[room.index];return json(q?.media&&['question','reveal'].includes(room.phase)&&(!url.searchParams.has('question')||url.searchParams.get('question')===q.id)?q.media:null);}
           else if(operation==='portrait'&&req.method==='GET') {
           const question=room.questions[room.index];
           if(room.phase!=='reveal'||question?.id!==url.searchParams.get('question')||!question.image?.portrait)return json(null);

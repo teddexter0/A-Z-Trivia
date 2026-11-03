@@ -31,7 +31,8 @@
       }
     ],
     "explanation": "Won the 2022 World Cup with Argentina.",
-    "source": "https://en.wikipedia.org/wiki/Lionel_Messi"
+    "source": "https://en.wikipedia.org/wiki/Lionel_Messi",
+    "portraitGroup": "men"
   },
   {
     "id": "person-iniesta",
@@ -67,7 +68,8 @@
       }
     ],
     "explanation": "Scored Spain’s winning goal in the 2010 World Cup final.",
-    "source": "https://en.wikipedia.org/wiki/Andr%C3%A9s_Iniesta"
+    "source": "https://en.wikipedia.org/wiki/Andr%C3%A9s_Iniesta",
+    "portraitGroup": "men"
   },
   {
     "id": "person-nadal",
@@ -103,7 +105,8 @@
       }
     ],
     "explanation": "The Spanish tennis player is closely associated with Roland-Garros.",
-    "source": "https://en.wikipedia.org/wiki/Rafael_Nadal"
+    "source": "https://en.wikipedia.org/wiki/Rafael_Nadal",
+    "portraitGroup": "men"
   },
   {
     "id": "person-guardiola",
@@ -139,7 +142,8 @@
       }
     ],
     "explanation": "Guardiola has coached Barcelona, Bayern Munich and Manchester City.",
-    "source": "https://en.wikipedia.org/wiki/Pep_Guardiola"
+    "source": "https://en.wikipedia.org/wiki/Pep_Guardiola",
+    "portraitGroup": "men"
   },
   {
     "id": "person-delbosque",
@@ -175,7 +179,8 @@
       }
     ],
     "explanation": "Coached Spain to the 2010 World Cup title.",
-    "source": "https://en.wikipedia.org/wiki/Vicente_del_Bosque"
+    "source": "https://en.wikipedia.org/wiki/Vicente_del_Bosque",
+    "portraitGroup": "men"
   },
   {
     "id": "person-casillas",
@@ -210,7 +215,8 @@
       }
     ],
     "explanation": "Spain’s captain and goalkeeper during its 2010 World Cup win.",
-    "source": "https://en.wikipedia.org/wiki/Iker_Casillas"
+    "source": "https://en.wikipedia.org/wiki/Iker_Casillas",
+    "portraitGroup": "men"
   },
   {
     "id": "person-maradona",
@@ -244,7 +250,8 @@
       }
     ],
     "explanation": "Maradona captained Argentina to the 1986 World Cup title.",
-    "source": "https://en.wikipedia.org/wiki/Diego_Maradona"
+    "source": "https://en.wikipedia.org/wiki/Diego_Maradona",
+    "portraitGroup": "men"
   },
   {
     "id": "person-suarez",
@@ -278,7 +285,8 @@
       }
     ],
     "explanation": "The Uruguayan forward played for Liverpool and Barcelona.",
-    "source": "https://en.wikipedia.org/wiki/Luis_Su%C3%A1rez"
+    "source": "https://en.wikipedia.org/wiki/Luis_Su%C3%A1rez",
+    "portraitGroup": "men"
   },
   {
     "id": "person-shakira",
@@ -311,7 +319,8 @@
       }
     ],
     "explanation": "Shakira was born in Barranquilla, Colombia.",
-    "source": "https://en.wikipedia.org/wiki/Shakira"
+    "source": "https://en.wikipedia.org/wiki/Shakira",
+    "portraitGroup": "women"
   },
   {
     "id": "person-badbunny",
@@ -346,7 +355,8 @@
       }
     ],
     "explanation": "Bad Bunny is a Puerto Rican artist; Puerto Rico is a US territory.",
-    "source": "https://en.wikipedia.org/wiki/Bad_Bunny"
+    "source": "https://en.wikipedia.org/wiki/Bad_Bunny",
+    "portraitGroup": "men"
   },
   {
     "id": "person-rosalia",
@@ -381,7 +391,8 @@
       }
     ],
     "explanation": "Rosalía is a Spanish singer associated with Motomami and El mal querer.",
-    "source": "https://en.wikipedia.org/wiki/Rosal%C3%ADa"
+    "source": "https://en.wikipedia.org/wiki/Rosal%C3%ADa",
+    "portraitGroup": "women"
   },
   {
     "id": "person-juanes",
@@ -414,7 +425,8 @@
       }
     ],
     "explanation": "The Colombian artist is known internationally for La camisa negra.",
-    "source": "https://en.wikipedia.org/wiki/Juanes"
+    "source": "https://en.wikipedia.org/wiki/Juanes",
+    "portraitGroup": "men"
   },
   {
     "id": "person-penelope",
@@ -450,7 +462,8 @@
       }
     ],
     "explanation": "Won an Academy Award for her supporting role in Vicky Cristina Barcelona.",
-    "source": "https://en.wikipedia.org/wiki/Pen%C3%A9lope_Cruz"
+    "source": "https://en.wikipedia.org/wiki/Pen%C3%A9lope_Cruz",
+    "portraitGroup": "women"
   },
   {
     "id": "person-salma",
@@ -485,7 +498,8 @@
       }
     ],
     "explanation": "The Mexican-born actress portrayed Frida Kahlo in Frida.",
-    "source": "https://en.wikipedia.org/wiki/Salma_Hayek"
+    "source": "https://en.wikipedia.org/wiki/Salma_Hayek",
+    "portraitGroup": "women"
   },
   {
     "id": "person-frida",
@@ -520,7 +534,8 @@
       }
     ],
     "explanation": "Frida Kahlo was a Mexican painter known for her self-portraits.",
-    "source": "https://en.wikipedia.org/wiki/Frida_Kahlo"
+    "source": "https://en.wikipedia.org/wiki/Frida_Kahlo",
+    "portraitGroup": "women"
   },
   {
     "id": "place-alhambra",
@@ -1424,5 +1439,96 @@
     ],
     "explanation": "Sobremesa can mean the time you spend at the table once the meal is over.",
     "source": "https://dle.rae.es/sobremesa"
+  },
+  {
+    "id": "person-rita-moreno",
+    "entity": "rita-moreno",
+    "category": "faces",
+    "tag": "Cine",
+    "portraitGroup": "women",
+    "prompt": "Who is this person?",
+    "image": {
+      "wiki": "Rita Moreno",
+      "portrait": "tmdb"
+    },
+    "hints": [
+      "She played Anita in West Side Story."
+    ],
+    "parts": [
+      {
+        "label": "Name",
+        "answers": [
+          "Rita Moreno"
+        ]
+      },
+      {
+        "label": "Country or territory",
+        "answers": [
+          "Puerto Rico"
+        ]
+      }
+    ],
+    "explanation": "Moreno won the supporting actress Oscar for West Side Story at the 1962 ceremony.",
+    "source": "https://www.oscars.org/videos-photos/34th-oscars-highlights"
+  },
+  {
+    "id": "person-mariana-pajon",
+    "entity": "mariana-pajon",
+    "category": "faces",
+    "tag": "Deporte",
+    "portraitGroup": "women",
+    "prompt": "Who is this person?",
+    "image": {
+      "wiki": "Mariana Pajón"
+    },
+    "hints": [
+      "Her sport is BMX racing."
+    ],
+    "parts": [
+      {
+        "label": "Name",
+        "answers": [
+          "Mariana Pajón"
+        ]
+      },
+      {
+        "label": "Country or territory",
+        "answers": [
+          "Colombia"
+        ]
+      }
+    ],
+    "explanation": "Pajón won Olympic BMX gold at London 2012 and Rio 2016.",
+    "source": "https://www.olympics.com/ioc/colombia"
+  },
+  {
+    "id": "person-yulimar-rojas",
+    "entity": "yulimar-rojas",
+    "category": "faces",
+    "tag": "Deporte",
+    "portraitGroup": "women",
+    "prompt": "Who is this person?",
+    "image": {
+      "wiki": "Yulimar Rojas"
+    },
+    "hints": [
+      "Her event combines a hop, a step and a jump."
+    ],
+    "parts": [
+      {
+        "label": "Name",
+        "answers": [
+          "Yulimar Rojas"
+        ]
+      },
+      {
+        "label": "Country or territory",
+        "answers": [
+          "Venezuela"
+        ]
+      }
+    ],
+    "explanation": "Rojas won Olympic triple jump gold for Venezuela at Tokyo 2020.",
+    "source": "https://www.olympics.com/ioc/noc-news/venezuela"
   }
 ]

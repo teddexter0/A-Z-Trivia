@@ -12,3 +12,7 @@
 .answer-portrait img{display:block;width:auto;max-width:min(100%,220px);max-height:190px;margin-bottom:.3rem;object-fit:contain}
 .answer-portrait figcaption{font-size:.75rem}
 @media(prefers-reduced-motion:reduce){.salsa-steps span{animation:none}}
+
+.chorus-deck{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:1rem;margin:1rem auto;padding:1rem;max-width:1100px;border:1px solid #5868ad;border-radius:16px;background:linear-gradient(115deg,#1f2860,#141831)}
+.chorus-deck p{margin:.35em 0}.chorus-deck small{color:#bfc7e4}
+.chorus-deck iframe,.chorus-embed{display:block;width:min(360px,100%);height:205px;min-width:200px;border:0;border-radius:8px}
