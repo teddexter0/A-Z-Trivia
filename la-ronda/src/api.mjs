@@ -15,10 +15,17 @@ export function makeApi({store,catalog,config={},local=false}) {
       if(path==='/api/rooms'&&req.method==='POST') {
         const body=await readBody(req);const name=nickname(body.nickname);if(!name)return json({error:'Choose a host nickname.'},400);
         if(config.firebase?.apiKey&&!local){const r=await fetch('https://identitytoolkit.googleapis.com/v1/accounts:lookup?key='+encodeURIComponent(config.firebase.apiKey),{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({idToken:body.firebaseToken})});if(!r.ok)return json({error:'Guest identity expired. Reload and try again.'},401);}
-        const history=await store.history();let imported=[];if(body.chorus)imported=importChorus(body.chorus);if(body.chorusUrl)imported.push(...await publicChorusSelection(body.chorusUrl));
+        const history=await store.history();let imported=[];if(body.chorus)imported=importChorus(body.chorus);const playlist=body.chorusUrl||config.chorusPlaylist;if(playlist)imported.push(...await publicChorusSelection(playlist));
         const enabled=Array.isArray(body.categories)?body.categories:['faces','places','phrases','campus','music'];
         const pool=[...catalog,...imported].filter(q=>enabled.includes(q.category));if(!pool.length)return json({error:'Select a category with available questions.'},400);
-        const pack=makePack(pool,history,Math.max(5,Math.min(25,Number(body.count)||15)));
+        const count=Math.max(5,Math.min(25,Number(body.count)||15));
+        const pack=makePack(pool,history,count);
+        const songs=pool.filter(q=>q.category==='music');
+        if(songs.length&&!pack.questions.some(q=>q.category==='music')){
+          const musicPack=makePack(songs,history,1);
+          pack.questions.splice(Math.floor(pack.questions.length/2),1,musicPack.questions[0]);
+          pack.cooldownRelaxed ||= musicPack.cooldownRelaxed;
+        }
         pack.questions.forEach(q=>q.parts.forEach(p=>{if(p.choices)p.choices=shuffled(p.choices);}));
         const hostToken=token(),playerToken=token();let room;
         for(let i=0;i<5;i++){const digits=new Uint32Array(1);crypto.getRandomValues(digits);const code=String(100000+(digits[0]%900000));room=createRoom({code,hostHash:await digest(hostToken),playerHash:await digest(playerToken),nickname:name,pack,now:Date.now(),settings:body});try{await store.insert(room);break;}catch(e){if(i===4)throw e;}}
@@ -35,7 +42,7 @@ export function makeApi({store,catalog,config={},local=false}) {
         const room=row.room,now=Date.now();let changed=step(room,now);const host=hash===room.hostHash;let player=room.players.find(p=>p.tokenHash===hash);
         if(operation==='join'&&req.method==='POST') {
           const body=await readBody(req);const name=nickname(body.nickname);if(!name)return json({error:'Enter a nickname.'},400);
-          if(room.phase!=='lobby')return json({error:'The session has started. Reconnect using the original device, or join the next session.'},409);
+          if(room.phase==='finished')return json({error:'This session has ended. Ask the host for the next room code.'},409);
           if(room.players.length>=50)return json({error:'This room is full (50 players).'},409);
           if(room.players.some(p=>p.nickname.toLowerCase()===name.toLowerCase()))return json({error:'That nickname is taken. Try another.'},409);
           const playerToken=token();player={id:crypto.randomUUID(),nickname:name,tokenHash:await digest(playerToken),joinedAt:now};room.players.push(player);changed=true;
@@ -61,12 +68,12 @@ async function readBody(req){if(bodies.has(req))return bodies.get(req);if(Number
 async function imageResponse(code,req,url,store){
   const row=await store.get(code);if(!row||row.room.expiresAt<Date.now())return json({error:'Room expired.'},404);
   const hash=await digest(auth(req));if(!row.room.players.some(p=>p.tokenHash===hash)&&row.room.hostHash!==hash)return json({error:'Join this room first.'},401);
-  step(row.room,Date.now());const q=row.room.questions[row.room.index];if(!q?.image||!['question','reveal'].includes(row.room.phase))return json({error:'No active image.'},404);
+  step(row.room,Date.now());const q=row.room.questions[row.room.index];if(url.searchParams.has('question')&&url.searchParams.get('question')!==q?.id)return json({error:'The question changed.'},409);if(!q?.image||!['question','reveal'].includes(row.room.phase))return json({error:'No active image.'},404);
   const key=q.image.wiki;let cached=caches.get(key);
   if(!cached||cached.expiry<Date.now()){
     const endpoint='https://en.wikipedia.org/w/api.php?action=query&format=json&prop=pageimages&piprop=original&pilicense=free&titles='+encodeURIComponent(key);
     const r=await fetch(endpoint,{headers:{'User-Agent':'LaRondaClubTrivia/1.0 (educational club game)'}});if(!r.ok)throw new Error('Photo unavailable. The host can void this round.');const data=await r.json();const page=Object.values(data.query?.pages||{})[0];const source=page?.original?.source;if(!source||new URL(source).hostname!=='upload.wikimedia.org')throw new Error('No freely licensed photo available.');
     cached={url:source,expiry:Date.now()+3600000};caches.set(key,cached);
   }
-  const image=await fetch(cached.url);if(!image.ok)throw new Error('Photo could not load.');return new Response(image.body,{headers:{'content-type':image.headers.get('content-type')||'image/jpeg','cache-control':'private, max-age=3600','x-content-type-options':'nosniff'}});
+  const image=await fetch(cached.url);if(!image.ok)throw new Error('Photo could not load.');return new Response(image.body,{headers:{'content-type':image.headers.get('content-type')||'image/jpeg','cache-control':'private, no-store','x-content-type-options':'nosniff'}});
 }

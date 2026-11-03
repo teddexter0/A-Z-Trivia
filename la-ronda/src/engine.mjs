@@ -18,7 +18,7 @@ export function makePack(catalog, history = [], count = 15, rng = Math.random, c
   return {questions:out,cooldownRelaxed:out.some(q=>recent.has(q.entity))};
 }
 export function createRoom({code,hostHash,playerHash,nickname,pack,now,settings={}}) {
-  return {code,hostHash,createdAt:now,expiresAt:now+8*3600000,revision:0,phase:'lobby',index:-1,deadline:null,paused:false,remaining:0,questions:pack.questions,cooldownRelaxed:pack.cooldownRelaxed,settings:{seconds:Math.max(15,Math.min(90,Number(settings.seconds)||30)),auto:settings.auto!==false},players:[{id:crypto.randomUUID(),tokenHash:playerHash,nickname:nickname||'Anfitrión',joinedAt:now}],answers:{},audit:[],voided:[]};
+  return {code,hostHash,createdAt:now,expiresAt:now+8*3600000,revision:0,phase:'lobby',index:-1,deadline:null,paused:false,remaining:0,questions:pack.questions,cooldownRelaxed:pack.cooldownRelaxed,settings:{seconds:Math.max(15,Math.min(90,Number(settings.seconds)||30)),auto:settings.auto!==false,speedBonus:settings.speedBonus===true},players:[{id:crypto.randomUUID(),tokenHash:playerHash,nickname:nickname||'Anfitrión',joinedAt:now}],answers:{},audit:[],voided:[]};
 }
 export function step(room, now) {
   if(room.paused||room.phase==='lobby'||room.phase==='finished')return false;
@@ -61,10 +61,21 @@ export function control(room, action, payload, now) {
 export function snapshot(room, playerId, host=false, now=Date.now()) {
   const q=room.questions[room.index];const revealed=['reveal','finished'].includes(room.phase);
   const visibleIds=new Set(room.questions.slice(0,room.index+(revealed?1:0)).map(q=>q.id));
-  const leaderboard=room.players.map(p=>({id:p.id,nickname:p.nickname,points:Math.round(Object.values(room.answers).filter(a=>a.playerId===p.id&&visibleIds.has(a.questionId)&&!room.voided.includes(a.questionId)).reduce((s,a)=>s+a.points,0))})).sort((a,b)=>b.points-a.points||a.nickname.localeCompare(b.nickname));
+  const answers=Object.values(room.answers);
+  const bonuses=new Map();
+  if(room.settings.speedBonus){
+    for(const id of visibleIds){
+      const fastest=answers.filter(a=>a.questionId===id&&a.parts.every(p=>p.correct)).sort((a,b)=>a.receivedAt-b.receivedAt);
+      fastest.forEach(answer=>{
+        const position=fastest.findIndex(other=>other.receivedAt===answer.receivedAt);
+        if(position<3)bonuses.set(answer,[15,10,5][position]);
+      });
+    }
+  }
+  const pointsFor=answer=>answer.points+(bonuses.get(answer)||0);
+  const leaderboard=room.players.map(p=>({id:p.id,nickname:p.nickname,points:Math.round(answers.filter(a=>a.playerId===p.id&&visibleIds.has(a.questionId)&&!room.voided.includes(a.questionId)).reduce((s,a)=>s+pointsFor(a),0))})).sort((a,b)=>b.points-a.points||a.nickname.localeCompare(b.nickname));
   let rank=0,last=null;leaderboard.forEach((p,i)=>{if(p.points!==last)rank=i+1;p.rank=rank;last=p.points;});
   const mine=q?room.answers[q.id+':'+playerId]:null;
   const question=q?{id:q.id,category:q.category,prompt:q.prompt,hints:q.hints,style:q.style,hasImage:!!q.image,media:q.media?{kind:q.media.kind}:null,parts:q.parts.map(p=>({label:p.label,placeholder:p.placeholder,choices:p.choices})),...(revealed?{explanation:q.explanation,source:q.source,credit:q.credit,answers:q.parts.map(p=>p.answers[0]),voided:room.voided.includes(q.id)}:{})}:null;
-  const {hostHash,questions,answers,...unused}=room;
-  return {code:room.code,phase:room.phase,index:room.index,total:room.questions.length,deadline:room.deadline,serverNow:now,paused:room.paused,remaining:room.remaining,settings:room.settings,question,leaderboard,playerId,isHost:host,submitted:!!mine,receipt:mine?{receivedAt:mine.receivedAt,...(revealed?{parts:mine.parts,points:mine.points}:{})}:null,answerCount:q?Object.values(room.answers).filter(a=>a.questionId===q.id).length:0,cooldownRelaxed:room.cooldownRelaxed,...(host&&revealed&&q?{responses:Object.values(room.answers).filter(a=>a.questionId===q.id),audit:room.audit}:{}),...(room.phase==='finished'?{recap:room.questions.map(q=>({prompt:q.prompt,answers:q.parts.map(p=>p.answers[0]),explanation:q.explanation,source:q.source,voided:room.voided.includes(q.id)}))}:{})};
+  return {code:room.code,phase:room.phase,index:room.index,total:room.questions.length,deadline:room.deadline,serverNow:now,paused:room.paused,remaining:room.remaining,settings:room.settings,question,leaderboard,playerId,isHost:host,submitted:!!mine,receipt:mine?{receivedAt:mine.receivedAt,...(revealed?{parts:mine.parts,points:pointsFor(mine),speedBonus:bonuses.get(mine)||0}:{})}:null,answerCount:q?Object.values(room.answers).filter(a=>a.questionId===q.id).length:0,cooldownRelaxed:room.cooldownRelaxed,...(host&&revealed&&q?{responses:Object.values(room.answers).filter(a=>a.questionId===q.id),audit:room.audit}:{}),...(room.phase==='finished'?{recap:room.questions.map(q=>({prompt:q.prompt,answers:q.parts.map(p=>p.answers[0]),explanation:q.explanation,source:q.source,voided:room.voided.includes(q.id)}))}:{})};
 }

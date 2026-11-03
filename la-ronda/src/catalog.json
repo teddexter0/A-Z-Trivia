@@ -4,7 +4,7 @@
     "entity": "messi",
     "category": "faces",
     "tag": "Fútbol",
-    "prompt": "¿Quién es esta persona?",
+    "prompt": "Who is this person?",
     "image": {
       "wiki": "Lionel Messi"
     },
@@ -38,7 +38,7 @@
     "entity": "iniesta",
     "category": "faces",
     "tag": "Fútbol",
-    "prompt": "¿Quién es esta persona?",
+    "prompt": "Who is this person?",
     "image": {
       "wiki": "Andrés Iniesta"
     },
@@ -74,7 +74,7 @@
     "entity": "nadal",
     "category": "faces",
     "tag": "Deporte",
-    "prompt": "¿Quién es esta persona?",
+    "prompt": "Who is this person?",
     "image": {
       "wiki": "Rafael Nadal"
     },
@@ -110,7 +110,7 @@
     "entity": "guardiola",
     "category": "faces",
     "tag": "Fútbol",
-    "prompt": "¿Quién es esta persona?",
+    "prompt": "Who is this person?",
     "image": {
       "wiki": "Pep Guardiola"
     },
@@ -146,7 +146,7 @@
     "entity": "delbosque",
     "category": "faces",
     "tag": "Fútbol",
-    "prompt": "¿Quién es esta persona?",
+    "prompt": "Who is this person?",
     "image": {
       "wiki": "Vicente del Bosque"
     },
@@ -182,7 +182,7 @@
     "entity": "casillas",
     "category": "faces",
     "tag": "Fútbol",
-    "prompt": "¿Quién es esta persona?",
+    "prompt": "Who is this person?",
     "image": {
       "wiki": "Iker Casillas"
     },
@@ -217,7 +217,7 @@
     "entity": "maradona",
     "category": "faces",
     "tag": "Fútbol",
-    "prompt": "¿Quién es esta persona?",
+    "prompt": "Who is this person?",
     "image": {
       "wiki": "Diego Maradona"
     },
@@ -251,7 +251,7 @@
     "entity": "suarez",
     "category": "faces",
     "tag": "Fútbol",
-    "prompt": "¿Quién es esta persona?",
+    "prompt": "Who is this person?",
     "image": {
       "wiki": "Luis Suárez"
     },
@@ -285,7 +285,7 @@
     "entity": "shakira",
     "category": "faces",
     "tag": "Música",
-    "prompt": "¿Quién es esta persona?",
+    "prompt": "Who is this person?",
     "image": {
       "wiki": "Shakira"
     },
@@ -318,7 +318,7 @@
     "entity": "badbunny",
     "category": "faces",
     "tag": "Música",
-    "prompt": "¿Quién es esta persona?",
+    "prompt": "Who is this person?",
     "image": {
       "wiki": "Bad Bunny"
     },
@@ -353,7 +353,7 @@
     "entity": "rosalia",
     "category": "faces",
     "tag": "Música",
-    "prompt": "¿Quién es esta persona?",
+    "prompt": "Who is this person?",
     "image": {
       "wiki": "Rosalía"
     },
@@ -388,7 +388,7 @@
     "entity": "juanes",
     "category": "faces",
     "tag": "Música",
-    "prompt": "¿Quién es esta persona?",
+    "prompt": "Who is this person?",
     "image": {
       "wiki": "Juanes"
     },
@@ -421,7 +421,7 @@
     "entity": "penelope",
     "category": "faces",
     "tag": "Cine",
-    "prompt": "¿Quién es esta persona?",
+    "prompt": "Who is this person?",
     "image": {
       "wiki": "Penélope Cruz"
     },
@@ -456,7 +456,7 @@
     "entity": "salma",
     "category": "faces",
     "tag": "Cine",
-    "prompt": "¿Quién es esta persona?",
+    "prompt": "Who is this person?",
     "image": {
       "wiki": "Salma Hayek"
     },
@@ -490,7 +490,7 @@
     "entity": "frida",
     "category": "faces",
     "tag": "Arte",
-    "prompt": "¿Quién es esta persona?",
+    "prompt": "Who is this person?",
     "image": {
       "wiki": "Frida Kahlo"
     },
@@ -524,7 +524,7 @@
     "id": "place-alhambra",
     "entity": "alhambra",
     "category": "places",
-    "prompt": "¿Dónde está este lugar?",
+    "prompt": "Where is this place?",
     "image": {
       "wiki": "Alhambra"
     },
@@ -558,7 +558,7 @@
     "id": "place-sagrada",
     "entity": "sagrada",
     "category": "places",
-    "prompt": "¿Dónde está este lugar?",
+    "prompt": "Where is this place?",
     "image": {
       "wiki": "Sagrada Família"
     },
@@ -593,7 +593,7 @@
     "id": "place-machu",
     "entity": "machu",
     "category": "places",
-    "prompt": "¿Dónde está este lugar?",
+    "prompt": "Where is this place?",
     "image": {
       "wiki": "Machu Picchu"
     },
@@ -626,7 +626,7 @@
     "id": "place-chichen",
     "entity": "chichen",
     "category": "places",
-    "prompt": "¿Dónde está este lugar?",
+    "prompt": "Where is this place?",
     "image": {
       "wiki": "Chichen Itza"
     },
@@ -659,7 +659,7 @@
     "id": "place-alcazar",
     "entity": "alcazar",
     "category": "places",
-    "prompt": "¿Dónde está este lugar?",
+    "prompt": "Where is this place?",
     "image": {
       "wiki": "Alcázar of Segovia"
     },
@@ -694,7 +694,7 @@
     "id": "place-casarosada",
     "entity": "casarosada",
     "category": "places",
-    "prompt": "¿Dónde está este lugar?",
+    "prompt": "Where is this place?",
     "image": {
       "wiki": "Casa Rosada"
     },
@@ -726,7 +726,7 @@
     "id": "place-bellasartes",
     "entity": "bellasartes",
     "category": "places",
-    "prompt": "¿Dónde está este lugar?",
+    "prompt": "Where is this place?",
     "image": {
       "wiki": "Palacio de Bellas Artes"
     },
@@ -759,7 +759,7 @@
     "id": "place-cartagena",
     "entity": "cartagena",
     "category": "places",
-    "prompt": "¿Dónde está este lugar?",
+    "prompt": "Where is this place?",
     "image": {
       "wiki": "Cartagena, Colombia"
     },
@@ -792,7 +792,7 @@
     "id": "place-easter",
     "entity": "easter",
     "category": "places",
-    "prompt": "¿Dónde está este lugar?",
+    "prompt": "Where is this place?",
     "image": {
       "wiki": "Moai"
     },
@@ -828,7 +828,7 @@
     "id": "place-prado",
     "entity": "prado",
     "category": "places",
-    "prompt": "¿Dónde está este lugar?",
+    "prompt": "Where is this place?",
     "image": {
       "wiki": "Museo del Prado"
     },
@@ -863,7 +863,7 @@
     "id": "place-cibeles",
     "entity": "cibeles",
     "category": "places",
-    "prompt": "¿Dónde está este lugar?",
+    "prompt": "Where is this place?",
     "image": {
       "wiki": "Cybele Palace"
     },
@@ -898,7 +898,7 @@
     "id": "place-moneda",
     "entity": "moneda",
     "category": "places",
-    "prompt": "¿Dónde está este lugar?",
+    "prompt": "Where is this place?",
     "image": {
       "wiki": "La Moneda Palace"
     },
@@ -931,7 +931,7 @@
     "id": "phrase-pan",
     "entity": "phrase-pan",
     "category": "phrases",
-    "prompt": "Es pan comido.",
+    "prompt": "What does this mean? Es pan comido.",
     "hints": [
       "No habla de comida aquí."
     ],
@@ -956,7 +956,7 @@
     "id": "phrase-pelo",
     "entity": "phrase-pelo",
     "category": "phrases",
-    "prompt": "Me estás tomando el pelo.",
+    "prompt": "What does this mean? Me estás tomando el pelo.",
     "hints": [
       "Es una broma."
     ],
@@ -981,7 +981,7 @@
     "id": "phrase-ganas",
     "entity": "phrase-ganas",
     "category": "phrases",
-    "prompt": "Tengo ganas de viajar.",
+    "prompt": "What does this mean? Tengo ganas de viajar.",
     "hints": [
       "Expresa un deseo."
     ],
@@ -1006,7 +1006,7 @@
     "id": "phrase-luego",
     "entity": "phrase-luego",
     "category": "phrases",
-    "prompt": "Hasta luego.",
+    "prompt": "What does this mean? Hasta luego.",
     "hints": [
       "Una despedida."
     ],
@@ -1031,7 +1031,7 @@
     "id": "phrase-embarazada",
     "entity": "phrase-embarazada",
     "category": "phrases",
-    "prompt": "Estoy embarazada.",
+    "prompt": "What does this mean? Estoy embarazada.",
     "hints": [
       "Cuidado: falso amigo."
     ],
@@ -1056,7 +1056,7 @@
     "id": "phrase-cuenta",
     "entity": "phrase-cuenta",
     "category": "phrases",
-    "prompt": "La cuenta, por favor.",
+    "prompt": "What does this mean? La cuenta, por favor.",
     "hints": [
       "En un restaurante."
     ],
@@ -1081,7 +1081,7 @@
     "id": "phrase-quedar",
     "entity": "phrase-quedar",
     "category": "phrases",
-    "prompt": "Quedamos a las seis.",
+    "prompt": "What does this mean? Quedamos a las seis.",
     "hints": [
       "Es un plan con otra persona."
     ],
@@ -1106,7 +1106,7 @@
     "id": "phrase-casa",
     "entity": "phrase-casa",
     "category": "phrases",
-    "prompt": "Siéntete como en casa.",
+    "prompt": "What does this mean? Siéntete como en casa.",
     "hints": [
       "Una bienvenida."
     ],
@@ -1131,7 +1131,7 @@
     "id": "phrase-reply",
     "entity": "phrase-reply",
     "category": "phrases",
-    "prompt": "Someone says: «Muchas gracias». ¿Qué respondes?",
+    "prompt": "Someone says \"Muchas gracias\". How do you respond?",
     "hints": [
       "Una respuesta cortés."
     ],
@@ -1156,7 +1156,7 @@
     "id": "phrase-edad",
     "entity": "phrase-edad",
     "category": "phrases",
-    "prompt": "«Tengo veinte años». ¿Qué significa?",
+    "prompt": "What does this mean? «Tengo veinte años».",
     "hints": [
       "Habla de la edad."
     ],
@@ -1206,7 +1206,7 @@
     "id": "campus-josemaria",
     "entity": "campus-josemaria",
     "category": "campus",
-    "prompt": "¿Quién inspiró y alentó el inicio de Strathmore College?",
+    "prompt": "Who inspired and encouraged the founding of Strathmore College?",
     "hints": [
       "Fundó el Opus Dei."
     ],

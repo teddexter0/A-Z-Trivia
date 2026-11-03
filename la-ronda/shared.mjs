@@ -8,6 +8,7 @@ export async function mountRonda(server,{prefix='/la-ronda'}={}){
   if(!credential)throw new Error('La Ronda needs its dedicated Firebase server credential.');
   const catalog=JSON.parse(await readFile(new URL('src/catalog.json',root),'utf8'));
   const config=JSON.parse(await readFile(new URL('src/config.json',root),'utf8'));config.transport='websocket';
+  config.chorusPlaylist=process.env.RONDA_CHORUS_PLAYLIST;
   const api=makeApi({store:new FirebaseStore(credential),catalog,config,local:false});
   const assets=new Map(await Promise.all([['/','web/index.html','text/html'],['/app.js','web/app.js','text/javascript'],['/style.css','web/style.css','text/css']].map(async([p,file,type])=>[p,{text:await readFile(new URL(file,root),'utf8'),type}])));
   attachRealtime(server,api,{socketPath:prefix+'/live'});
@@ -25,7 +26,7 @@ export async function mountRonda(server,{prefix='/la-ronda'}={}){
       }
       const asset=assets.get(local.split('?')[0]);if(!asset){res.writeHead(404);res.end('Not found');return;}
       const text=asset.type==='text/html'?asset.text.replaceAll('href="/"','href="'+prefix+'/"').replaceAll('href="/style.css"','href="'+prefix+'/style.css"').replaceAll('src="/app.js"','src="'+prefix+'/app.js"'):asset.text;
-      res.writeHead(200,{'content-type':asset.type+'; charset=utf-8','x-content-type-options':'nosniff'});res.end(text);
+      res.writeHead(200,{'content-type':asset.type+'; charset=utf-8','x-content-type-options':'nosniff','cache-control':'no-cache'});res.end(text);
     }catch{if(!res.headersSent)res.writeHead(503,{'content-type':'application/json'});res.end(JSON.stringify({error:'La Ronda is temporarily unavailable. Please reconnect.'}));}
   };
 }

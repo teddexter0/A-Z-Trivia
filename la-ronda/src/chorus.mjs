@@ -12,7 +12,7 @@ export function importChorus(input) {
     if(!Number.isFinite(start)||!Number.isFinite(end)||start<0||end<=start||end-start>90)throw new Error('Clip '+(i+1)+': select a valid 1–90 second loop in Chorus Clip first.');
     const aliases=[rawTitle,...(Array.isArray(clip.titleAliases)?clip.titleAliases.filter(x=>typeof x==='string').slice(0,10):[])];
     const artists=[...artist.split(/\s+(?:feat\.?|ft\.?|&|x)\s+|,\s*/i).filter(Boolean),...(Array.isArray(clip.artistAliases)?clip.artistAliases.filter(x=>typeof x==='string').slice(0,10):[])];
-    return {id:'song-'+videoId,entity:'song-'+videoId,category:'music',prompt:'¿Qué canción es? ¿Quién la canta?',hints:['Song title and artist each earn 50 points.'],media:{kind:'youtube',videoId,start,end},parts:[{label:'Canción / Song',answers:[title,...aliases],placeholder:'Song title — leave blank if unsure'},{label:'Artista / Artist',answers:[artist,...artists],placeholder:'Artist — leave blank if unsure'}],explanation:title+' — '+artist,source:'https://www.youtube.com/watch?v='+videoId,chorusClipId:clip.id||null};
+    return {id:'song-'+videoId,entity:'song-'+videoId,category:'music',prompt:'Name the song and the artist.',hints:['Song title and artist each earn 50 points.'],media:{kind:'youtube',videoId,start,end},parts:[{label:'Song title',answers:[title,...aliases],placeholder:'Song title — leave blank if unsure'},{label:'Artist',answers:[artist,...artists],placeholder:'Artist — leave blank if unsure'}],explanation:title+' — '+artist,source:'https://www.youtube.com/watch?v='+videoId,chorusClipId:clip.id||null};
   });
   const unique=new Map(questions.map(q=>[q.entity,q]));return [...unique.values()];
 }
@@ -31,9 +31,12 @@ export async function publicChorusSelection(link,fetcher=fetch){
   const clipId=url.searchParams.get('clip'),playlistId=url.searchParams.get('playlist');
   const id=clipId||playlistId;if(!id||!/^[A-Za-z0-9_-]{1,100}$/.test(id))throw new Error('The share link needs ?clip=ID or ?playlist=ID.');
   const base='https://firestore.googleapis.com/v1/projects/chorusclip-57072/databases/(default)/documents/';
-  async function document(collection,id){const r=await fetcher(base+collection+'/'+encodeURIComponent(id),{signal:AbortSignal.timeout(12000)});if(!r.ok)throw new Error('This Chorus Clip selection is unavailable or private. Publish it in Chorus Clip, or import your own JSON.');const data=await r.json();return {id,...Object.fromEntries(Object.entries(data.fields||{}).map(([k,v])=>[k,decodeFirestore(v)]))};}
+  async function document(collection,id){const r=await fetcher(base+collection+'/'+encodeURIComponent(id),{signal:AbortSignal.timeout(12000)});if(!r.ok)throw new Error('This Chorus Clip selection is unavailable or private. Check that sharing is turned on in Chorus Clip.');const data=await r.json();return {id,...Object.fromEntries(Object.entries(data.fields||{}).map(([k,v])=>[k,decodeFirestore(v)]))};}
   if(clipId){const clip=await document('clips',id);if(clip.isPublic!==true)throw new Error('Only public share links can be read without signing in to Chorus Clip.');return importChorus(clip);}
-  const playlist=await document('publicPlaylists',id),live=[];
-  for(const clip of (playlist.clips||[]).slice(0,20)){try{if(clip.id){const current=await document('clips',clip.id);if(current.isPublic===true)live.push(current);}else if(clip.isPublic===true)live.push(clip);}catch{ /* Never resurrect a now-private clip from a stale public mirror. */ }}
+  const playlist=await document('publicPlaylists',id);
+  const clips=await Promise.all((playlist.clips||[]).slice(0,20).map(async clip=>{
+    try{return clip.id?await document('clips',clip.id):clip;}catch{return null;}
+  }));
+  const live=clips.filter(clip=>clip?.isPublic===true);
   if(!live.length)throw new Error('No currently public clips remain in this playlist.');return importChorus(live);
 }
