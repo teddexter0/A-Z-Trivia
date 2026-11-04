@@ -40,7 +40,7 @@ function renderRoom(){view='room';const s=state,q=s.question;const reveal=s.phas
  if(s.phase==='question'&&!s.submitted){const saved=drafts[q.id]||[];document.querySelectorAll('[data-answer-index]').forEach(input=>{input.value=saved[Number(input.dataset.answerIndex)]||'';});document.querySelectorAll('.choice').forEach(btn=>{btn.classList.toggle('selected',saved[0]===btn.dataset.value);});}
  updateLive();}
 function questionMedia(q,reveal){if(q.hasImage)return '<div class="photo-wrap '+(q.category==='faces'?'portrait-frame':'')+'"><img id="question-photo" alt="Mystery photograph for this round" draggable="false"><canvas id="scratch" aria-hidden="true"></canvas><span class="photo-label">'+(reveal?'The reveal':'Watch the picture emerge…')+'</span></div>';
- if(q.media)return `<div class="music-art"><div class="disc"></div></div><p class="muted" style="text-align:center">Listen to the host’s speakers. Name either part—or both.</p>`;
+ if(q.media)return '';
  return `<div class="question-text">${esc(q.category==='phrases'?'Piensa un poquito.':'Una conexión con nuestro campus.')}</div>`;}
 function answerForm(s){if(s.submitted)return '<div class="receipt">✓ Answer received.<br><span style="font-size:15px">Locked in. You’ll see your score after the reveal.</span></div>';const q=s.question;return `<form id="answer" class="answers">${q.parts[0].choices?`<div class="choice-grid">${q.parts[0].choices.map(v=>`<button type="button" class="choice" data-value="${esc(v)}">${esc(v)}</button>`).join('')}</div>`:`<div class="answer-fields">${q.parts.map((p,i)=>`<label>${esc(p.label)}<input data-answer-index="${i}" maxlength="100" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="${esc(p.placeholder||'Your answer')}"></label>`).join('')}</div>`}<div class="submit-row"><span class="muted" style="font-size:14px">One attempt · <span id="answer-count">${s.answerCount}</span> / ${s.leaderboard.length} answered</span><button class="btn" type="submit">Lock it in ↗</button></div></form>`;}
 function revealPanel(s){const q=s.question;return `<div class="reveal"><div class="tag">${q.voided?'ROUND VOIDED · NO POINTS':'THE ANSWER'}</div><div id="answer-portrait"></div><div class="reveal-answer">${q.answers.map(esc).join(' <span style="color:#8d99b1">/</span> ')}</div><p class="muted">${esc(q.explanation)}</p>${s.receipt?`<div class="spaced">${s.receipt.parts.map(p=>`<div class="part-result"><div>${p.correct?'✓':'○'} ${esc(p.value||'No answer')}<br><span>${esc(p.label)}</span></div><strong>${q.voided?0:Math.round(p.points)} pts</strong></div>`).join('')}${!q.voided&&s.receipt.speedBonus?'<p>Speed bonus: +'+s.receipt.speedBonus+' pts</p>':''}</div>`:'<p class="muted spaced">No answer submitted this round.</p>'}${q.credit?`<p class="muted">${esc(q.credit)}</p>`:''}${q.source?`<a class="source" target="_blank" rel="noopener" href="${esc(q.source)}">Check the source${q.hasImage?' / photograph credits':''} ↗</a>`:''}</div>${s.isHost?corrections(s):''}`;}
@@ -180,14 +180,18 @@ function loadYouTube(){
   return youtubeReady;
 }
 function syncChorus(room){
-  if(!room.isHost||!['countdown','question'].includes(room.phase)||!room.question?.media){stopChorus();return;}
+  if(!['countdown','question'].includes(room.phase)||room.question?.media?.kind!=='youtube'){stopChorus();return;}
   const key=room.code+':'+room.question.id;
   if(chorus?.key===key){
     const waiting=room.paused||room.phase==='countdown';
     if(chorus.paused!==waiting){
       chorus.paused=waiting;
-      if(waiting){chorus.deck.classList.remove('playing');chorus.player?.pauseVideo?.();}
-      else if(!chorus.ended)chorus.player?.playVideo?.();
+      chorus.playButton.disabled=waiting;
+      if(waiting){chorus.deck.classList.remove('playing');if(chorus.ready)chorus.player.pauseVideo();}
+      else if(chorus.ready&&!chorus.ended){
+        chorus.playButton.hidden=false;
+        chorus.player.playVideo();
+      }
     }
     return;
   }
@@ -198,18 +202,21 @@ function syncChorus(room){
   deck.innerHTML='<div class="chorus-embed" inert aria-hidden="true"></div><div class="chorus-cover"><div class="chorus-bars" aria-hidden="true">'+Array.from({length:15},(_,i)=>'<i style="--beat:'+i+'"></i>').join('')+'</div><p role="status">Loading the chorus…</p><button type="button" class="btn small" hidden>Play chorus</button></div>';
   app.before(deck);
   const playButton=deck.querySelector('button');
-  playButton.onclick=()=>{if(chorus?.ready&&!chorus.paused)chorus.player.playVideo();};
-  const current={key,deck,paused:room.paused||room.phase==='countdown',ended:false,player:null};
+  const current={key,deck,playButton,paused:room.paused||room.phase==='countdown',ended:false,player:null};
   chorus=current;
+  playButton.disabled=current.paused;
+  playButton.onclick=()=>{
+    if(chorus===current&&current.ready&&!current.paused&&!current.ended)current.player.playVideo();
+  };
   const status=message=>{if(chorus===current)deck.querySelector('[role=status]').textContent=message;};
   Promise.all([request('/api/rooms/'+room.code+'/media?question='+encodeURIComponent(room.question.id)),loadYouTube()]).then(([media,YT])=>{
     if(chorus!==current)return;
-    if(!media){status('This chorus is unavailable. You can void this question.');return;}
+    if(!media){status('This chorus is unavailable.');return;}
     const clip={videoId:media.videoId,startSeconds:media.start,endSeconds:media.end};
     const frame=doc.createElement('iframe');
     const params=new URLSearchParams({enablejsapi:'1',playsinline:'1',origin:location.origin,start:String(Math.floor(media.start)),end:String(Math.ceil(media.end))});
     frame.src='https://www.youtube.com/embed/'+encodeURIComponent(media.videoId)+'?'+params;
-    frame.title='Private chorus player';
+    frame.title='Chorus Clip player';
     frame.width='480';frame.height='270';
     frame.allow='autoplay; encrypted-media';
     frame.referrerPolicy='strict-origin-when-cross-origin';
@@ -220,8 +227,14 @@ function syncChorus(room){
         onReady:({target})=>{
           if(chorus!==current)return;
           current.ready=true;
-          if(current.paused)target.cueVideoById(clip);
-          else target.loadVideoById(clip);
+          playButton.hidden=false;
+          if(current.paused){
+            status('The chorus is ready.');
+            target.cueVideoById(clip);
+          }else{
+            status('Tap Play chorus if sound doesn’t start.');
+            target.loadVideoById(clip);
+          }
         },
         onAutoplayBlocked:()=>{if(chorus===current){status('Tap to enable sound.');playButton.hidden=false;}},
         onStateChange:({data,target})=>{
@@ -231,15 +244,19 @@ function syncChorus(room){
             else{playButton.hidden=true;deck.classList.add('playing');status('Playing the chorus');}
           }
           if(data!==YT.PlayerState.PLAYING)deck.classList.remove('playing');
-          if(data===YT.PlayerState.ENDED){current.ended=true;status('Chorus complete');}
+          if(data===YT.PlayerState.ENDED){current.ended=true;playButton.hidden=true;status('Chorus complete');}
         },
-        onError:()=>status('This video cannot play here. You can void this question.')
+        onError:()=>{
+          if(chorus!==current)return;
+          playButton.hidden=true;
+          status('This video cannot play on this device.');
+        }
       }
       });
     },{once:true});
     frame.tabIndex=-1;
     deck.querySelector('.chorus-embed').append(frame);
-  }).catch(()=>status('The chorus could not load. You can void this question.'));
+  }).catch(()=>status('The chorus could not load on this device.'));
 }
 $('#sound').onclick=()=>{sound=!sound;$('#sound').textContent=sound?'♫':'♩';toast(sound?'Game sounds on.':'Game sounds off.');if(sound)beep();};
 function beep(){if(!sound)return;try{const C=window.AudioContext||window.webkitAudioContext,c=new C(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=620;g.gain.setValueAtTime(.05,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.2);o.start();o.stop(c.currentTime+.2);setTimeout(()=>c.close(),300);}catch{}}

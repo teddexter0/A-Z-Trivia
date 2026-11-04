@@ -77,7 +77,12 @@ export function makeApi({store,catalog,config={},local=false,portraitLookup}) {
             if(stale){
               if(!['start','next','reveal'].includes(body.action))return json({error:'The question changed. Try again on the current round.'},409);
             }else{control(room,body.action,body,now);changed=true;}}
-          else if(operation==='media') {if(!host)return json({error:'Playback is on the host device.'},403);const q=room.questions[room.index];return json(q?.media&&['countdown','question','reveal'].includes(room.phase)&&(!url.searchParams.has('question')||url.searchParams.get('question')===q.id)?q.media:null);}
+          else if(operation==='media'&&req.method==='GET') {
+            const question=room.questions[room.index];
+            const questionId=url.searchParams.get('question');
+            if(!['countdown','question'].includes(room.phase)||question?.id!==questionId)return json(null);
+            return json(question.media??null);
+          }
           else if(operation==='portrait'&&req.method==='GET') {
           const question=room.questions[room.index];
           if(room.phase!=='reveal'||question?.id!==url.searchParams.get('question')||!question.image?.portrait)return json(null);

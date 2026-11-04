@@ -99,3 +99,33 @@ test('a close typed answer earns partial points and does not qualify as fully co
   assert.ok(result.parts[1].points>0&&result.parts[1].points<50);
   assert.equal(result.parts[1].correct,false);
 });
+
+test('only joined room members can fetch the active chorus, with no answer metadata',async()=>{
+  const store=new MemoryStore();
+  const api=makeApi({store,catalog,config:{},local:true});
+  const call=(path,body,token)=>api(new Request('http://localhost'+path,{
+    method:body?'POST':'GET',
+    headers:{'content-type':'application/json',...(token?{authorization:'Bearer '+token}:{})},
+    body:body?JSON.stringify(body):undefined
+  }));
+  const created=await call('/api/rooms',{nickname:'Host',mix:{music:1},chorus:{
+    title:'Test Song',artist:'Test Artist',youtubeVideoId:'abcdefghijk',loops:[{start:30,end:45}]
+  }});
+  assert.equal(created.status,201);
+  const {code,hostToken}=await created.json();
+  const roomPath='/api/rooms/'+code;
+  const joined=await call(roomPath+'/join',{nickname:'Phone player'});
+  assert.ok(joined.ok);
+  const {playerToken}=await joined.json();
+  const mediaPath=roomPath+'/media?question='+song.id;
+  assert.equal((await call(mediaPath)).status,401);
+  assert.equal(await (await call(mediaPath,null,playerToken)).json(),null);
+  assert.equal((await call(roomPath+'/control',{action:'start'},playerToken)).status,403);
+  assert.ok((await call(roomPath+'/control',{action:'start'},hostToken)).ok);
+  for(const token of [hostToken,playerToken]){
+    assert.deepEqual(await (await call(mediaPath,null,token)).json(),song.media);
+  }
+  assert.equal(await (await call(roomPath+'/media?question=stale',null,playerToken)).json(),null);
+  assert.ok((await call(roomPath+'/control',{action:'reveal'},hostToken)).ok);
+  assert.equal(await (await call(mediaPath,null,playerToken)).json(),null);
+});
